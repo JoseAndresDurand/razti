@@ -1,8 +1,8 @@
 # Estado del Proyecto: razti
 - **Última actualización:** 2026-11-18
-- **Hito activo:** `M2 [ACTIVO]: Vertical jugable en local` (20/11–24/11; iniciado el 18/11)
-- **Sprint en curso:** `S02 [ACTIVO]` ★ (cierra M2) · rama `sprint/S02-vertical-local`
-- **Fase:** `Fase 2 - S02 · listo para PR (2026-11-18T10:48:58-05:00)`
+- **Hito activo:** ninguno · `M2 [COMPLETADO]`, compuerta pendiente de veredicto
+- **Sprint en curso:** ninguno · `S02 [CERRADO]` (PR #5, `main@56fcb63`)
+- **Fase:** `Fase 2 cerrada · compuerta M2`
 - **Perfil:** clojure-game
 
 ## Tareas completadas
@@ -56,7 +56,9 @@
 - [x] Paso 9 (2026-11-18): los 7 gates en verde (`test` 44/471, `test-cljs-build`, `test-cljs` 31/178, `lint`, `format`, `build` 0 warnings, `uber`); grep de pureza limpio. Sin verificar aquí: `docker build` (el sandbox no ejecuta Docker) y los jobs nuevos de la CI → primera ejecución en el PR.
 - [x] Auditoría QA + seguridad (`docs/audits/S02-2026-11-18-{qa,sec}.md`): sin P0/P1; 10 P2 reparados (1 ronda); QA-08/09 reparados en la gobernanza; 8 P3 al backlog (QA-10–12, SEC-04–08).
 - [x] `itera-ship` (2026-11-18T10:48:58-05:00): los 7 gates en verde, sin P0/P1 abiertos, sin secretos en el diff, `## Gates` intacto.
-- [ ] Commit, push, PR y merge (líder); con la CI en verde (incluidos los jobs `clean-clone` y `docker`).
+- [x] Commit, push, PR #5 y merge (líder); CI completa en verde, incluidos `clean-clone` y `docker`.
+- [x] Retro (`docs/retro/S02.md`) y propuesta a `knowledge/` aprobada y escrita.
+- [x] Borrador de la compuerta `docs/milestones/M2-compuerta.md` (veredicto pendiente).
 
 ## Siguiente paso inmediato
-- El líder hace commit, push y PR de `sprint/S02-vertical-local` → `main`; con la CI en verde, merge. Después: `/iterastack:itera-retro` (S02 ★ cierra M2: compuerta y veredicto).
+- El líder da el veredicto de la compuerta M2: `/iterastack:itera-scope --veredicto M2 go|pivot|no-go`. Con Go: `/iterastack:itera-scope --iniciar S03` y `/iterastack:itera-tdd-unify --sprint S03` (prioridad: movimiento fluido).

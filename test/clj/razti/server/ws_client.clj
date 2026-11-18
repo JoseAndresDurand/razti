@@ -10,7 +10,7 @@
            (java.net.http HttpClient HttpRequest HttpResponse HttpResponse$BodyHandlers
                           WebSocket WebSocket$Builder WebSocket$Listener WebSocketHandshakeException)
            (java.time Duration)
-           (java.util.concurrent CompletionException)))
+           (java.util.concurrent CompletableFuture CompletionException)))
 
 (set! *warn-on-reflection* true)
 
@@ -55,7 +55,12 @@
           (.statusCode (.getResponse ^WebSocketHandshakeException c))
           (throw e))))))
 
-(defn- ws-constructor [{:keys [uri-str headers on-message on-error on-close]}]
+(defn- ws-constructor
+  "Sente registra el socket justo después de forzar este delay y descarta el
+  handshake que llegue antes (`own-socket?`). Por eso la conexión se abre de
+  forma asíncrona: forzar el delay no espera a la red, el socket queda
+  registrado primero y el handshake del servidor llega después."
+  [{:keys [uri-str headers on-message on-error on-close]}]
   (delay
     (let [buf (StringBuilder.)
           listener (reify WebSocket$Listener
@@ -72,12 +77,18 @@
                        (on-close code reason true)
                        nil)
                      (onError [_ _ws err] (on-error err)))
-          ^WebSocket ws (.join (.buildAsync (ws-builder headers) (URI. uri-str) listener))]
+          ^CompletableFuture ws-future (.buildAsync (ws-builder headers) (URI. uri-str) listener)
+          ws (fn ^WebSocket [] (.join ws-future))]
+      (.exceptionally ws-future
+                      (reify java.util.function.Function
+                        (apply [_ ex]
+                          (on-close 1006 (str ex) false)
+                          nil)))
       (reify i/IClientWebSocket
-        (cws-raw [_] ws)
-        (cws-send [_ data] (.join (.sendText ws ^CharSequence data true)) true)
+        (cws-raw [_] (ws))
+        (cws-send [_ data] (.join (.sendText ^WebSocket (ws) ^CharSequence data true)) true)
         (cws-close [_ code reason _clean?]
-          (.sendClose ws (int (or code 1000)) (str (or reason ""))))))))
+          (.sendClose ^WebSocket (ws) (int (or code 1000)) (str (or reason ""))))))))
 
 (defn connect!
   "Cliente Sente por WebSocket contra base-url (http://host:puerto)."
