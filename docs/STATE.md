@@ -1,8 +1,8 @@
 # Estado del Proyecto: razti
 - **Última actualización:** 2026-11-18
-- **Hito activo:** ninguno · `M1 [GO]` (2026-11-18); M2 `[EN ESPERA]` hasta `--iniciar S02`
-- **Sprint en curso:** ninguno · `S01 [CERRADO]` (PR #1 y #2, `main@8f9dcb2`)
-- **Fase:** `Fase 1 cerrada (M1 Go) · preparación del S02`
+- **Hito activo:** `M2 [ACTIVO]: Vertical jugable en local` (20/11–24/11; iniciado el 18/11)
+- **Sprint en curso:** `S02 [ACTIVO]` ★ (cierra M2) · rama `sprint/S02-vertical-local`
+- **Fase:** `Fase 2 - S02 · listo para PR (2026-11-18T10:48:58-05:00)`
 - **Perfil:** clojure-game
 
 ## Tareas completadas
@@ -43,5 +43,20 @@
 - [x] Conflictos del brief #1–#4 y #6–#8 decididos (2026-11-17, ver `docs/01-SCOPE.md`); #5 pendiente antes del S02.
 - [x] Repo público en GitHub: `JoseAndresDurand/razti` (2026-11-17); `main` y `sprint/S01-motor` publicadas.
 
+## Progreso del build S02
+- [x] Paso 1: `config.cljc` (salas, colores) y `specs.cljc` (SEC-03/04) + `specs_test`; gates en verde.
+- [x] Paso 2, esqueleto WAN: hechos `src/clj/razti/server/{core,ws}.clj` (solo eco), `resources/public/{index.html,css/style.css}`, `src/cljs/razti/client/{core,ws}.cljs` (barra de estado), `test/clj/razti/server/{ws_client,smoke,core_test}.clj`, alias `:run`/`:dev`/`:smoke`. `clojure -M:test`: 36 pruebas, 210 aserciones, 0 fallos (2026-11-18).
+- [x] `.devcontainer/{devcontainer.json,post-create.sh}`; gates `test` (36/210), `test-cljs` (31/176), `test-cljs-build`, `lint`, `format`, `build` (release, 0 warnings) en verde (2026-11-18).
+- [x] CHECKPOINT 1 (WAN), 2026-11-18: WebSocket desde datos móviles por Cloudflare Quick Tunnel desde el Codespace, eco ≈ 331 ms. La URL de puertos de Codespaces no sirve (origen reescrito, frames sin máscara); decisión del líder: opción A.
+- [x] Paso 4 (2026-11-18): `src/clj/razti/server/{rooms,loop,log}.clj`, router completo en `ws.clj`, barrido en `core.clj`; `test/clj/razti/server/{rooms_test,bots_test}.clj`. Gates: `test` 43/465, `test-cljs` 31/176, `lint`, `format`, `build` (0 warnings) en verde; sin reflection warnings.
+- [x] CHECKPOINT 2 (2026-11-18): `ss -tlnH` → `[::ffff:127.0.0.1]:3000` (solo loopback).
+- [x] Paso 6 (2026-11-18): `src/cljs/razti/client/{core,ws,input,render}.cljs` completos (vistas, acciones, teclado, canvas, colores T20, overlay C28). `build` release 0 warnings; `lint`, `format`, `test-cljs` en verde.
+- [x] CHECKPOINT 3 (2026-11-18): partida manual con 4 sesiones llega a un ganador (compuerta M2). Corregido en el checkpoint: `:razti/sync` al reconectar. Trazado de la grilla «pasable»: ajuste fino al backlog. El líder pide movimiento fluido → S03 (interpolación y predicción, C12).
+- [x] Paso 8 (2026-11-18): `deps.edn`/`build.clj` (T22 con `.cpcache`), `Dockerfile`, `.dockerignore`, `README.md`, jobs `clean-clone` y `docker` en `.github/workflows/ci.yml`.
+- [x] Paso 9 (2026-11-18): los 7 gates en verde (`test` 44/471, `test-cljs-build`, `test-cljs` 31/178, `lint`, `format`, `build` 0 warnings, `uber`); grep de pureza limpio. Sin verificar aquí: `docker build` (el sandbox no ejecuta Docker) y los jobs nuevos de la CI → primera ejecución en el PR.
+- [x] Auditoría QA + seguridad (`docs/audits/S02-2026-11-18-{qa,sec}.md`): sin P0/P1; 10 P2 reparados (1 ronda); QA-08/09 reparados en la gobernanza; 8 P3 al backlog (QA-10–12, SEC-04–08).
+- [x] `itera-ship` (2026-11-18T10:48:58-05:00): los 7 gates en verde, sin P0/P1 abiertos, sin secretos en el diff, `## Gates` intacto.
+- [ ] Commit, push, PR y merge (líder); con la CI en verde (incluidos los jobs `clean-clone` y `docker`).
+
 ## Siguiente paso inmediato
-- Sin pendientes del líder para el S02 (conflicto #5 decidido: 3 salas, 5 minutos de inactividad). Siguiente: `/iterastack:itera-scope --iniciar S02` y `/iterastack:itera-tdd-unify --sprint S02`.
+- El líder hace commit, push y PR de `sprint/S02-vertical-local` → `main`; con la CI en verde, merge. Después: `/iterastack:itera-retro` (S02 ★ cierra M2: compuerta y veredicto).

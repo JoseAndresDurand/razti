@@ -81,14 +81,18 @@
    [:room/blasts [:vector {:max 64} Blast]]
    [:room/winner [:maybe [:or PlayerId [:= :draw]]]]])
 
-;; Eventos del cliente (frontera, S02). El servidor añade :player-id desde la sesión.
+;; Eventos del cliente (frontera). Mapas cerrados (SEC-03): el servidor añade
+;; :player-id desde la sesión y rechaza cualquier clave extra.
 (def ClientEvent
   [:multi {:dispatch first}
-   [:razti/create-room [:tuple [:= :razti/create-room] [:map [:name Nickname]]]]
-   [:razti/join-room [:tuple [:= :razti/join-room] [:map [:code RoomCode] [:name Nickname]]]]
-   [:razti/start-game [:tuple [:= :razti/start-game] [:map]]]
-   [:razti/restart [:tuple [:= :razti/restart] [:map]]]
-   [:razti/input [:tuple [:= :razti/input] [:map
+   [:razti/create-room [:tuple [:= :razti/create-room] [:map {:closed true} [:name Nickname]]]]
+   [:razti/join-room [:tuple [:= :razti/join-room] [:map {:closed true} [:code RoomCode] [:name Nickname]]]]
+   [:razti/leave-room [:tuple [:= :razti/leave-room] [:map {:closed true}]]]
+   [:razti/start-game [:tuple [:= :razti/start-game] [:map {:closed true}]]]
+   [:razti/restart [:tuple [:= :razti/restart] [:map {:closed true}]]]
+   [:razti/echo [:tuple [:= :razti/echo] [:map {:closed true} [:t Counter]]]]
+   [:razti/sync [:tuple [:= :razti/sync] [:map {:closed true}]]]
+   [:razti/input [:tuple [:= :razti/input] [:map {:closed true}
                                             [:seq Seq]
                                             [:action [:enum :move :bomb]]
                                             [:dir {:optional true} Dir]]]]])
@@ -99,5 +103,11 @@
 
 (defn valid-room? [room] (room-validator room))
 (defn valid-input? [input] (input-validator input))
-(defn valid-client-event? [event] (client-event-validator event))
+(defn valid-client-event?
+  "Nunca lanza (SEC-04): solo vectores [id datos] llegan al validador."
+  [event]
+  (boolean (and (vector? event)
+                (= 2 (count event))
+                (keyword? (first event))
+                (client-event-validator event))))
 (defn explain-room [room] (m/explain Room room))

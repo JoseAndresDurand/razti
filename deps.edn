@@ -12,8 +12,16 @@
  :aliases
  {;; Servidor de desarrollo: clojure -M:dev
   :dev {:extra-paths ["dev"]
-        :jvm-opts ["-XX:+UseZGC" "-XX:+ZGenerational" "-Xms256m" "-Xmx256m"]
+        :jvm-opts ["-XX:+UseZGC" "-XX:+ZGenerational" "-Xms256m" "-Xmx256m" "-Drazti.dev=true"]
         :main-opts ["-m" "razti.server.core"]}
+
+  ;; Servidor (sirve el cliente compilado con release): clojure -M:run
+  :run {:jvm-opts ["-XX:+UseZGC" "-XX:+ZGenerational" "-Xms256m" "-Xmx256m"]
+        :main-opts ["-m" "razti.server.core"]}
+
+  ;; Humo contra un servidor en marcha: clojure -M:smoke [url-base]
+  :smoke {:extra-paths ["test/clj"]
+          :main-opts ["-m" "razti.server.smoke"]}
 
   ;; Script de assets (C26): clojure -M:assets [all|map|sprites|preview] [--src <dir>]
   :assets {:extra-paths ["dev"]
@@ -39,4 +47,5 @@
 
   ;; Uberjar: clojure -T:build uber
   :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.14"}}
+          :jvm-opts ["-Djava.io.tmpdir=.cpcache"] ; T22: /tmp es de solo lectura en el sandbox; .cpcache existe antes de la JVM
           :ns-default build}}}

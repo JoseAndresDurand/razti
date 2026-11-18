@@ -22,3 +22,14 @@
 (def room-code-alphabet "ABCDEFGHJKLMNPQRSTUVWXYZ23456789")
 (def nickname-max-length 12)
 (def max-inputs-per-second 30) ; lo aplica el servidor (S02)
+
+;; Servidor (S02; conflicto #5 y T15, T20)
+(def max-rooms 3)
+(def room-idle-ms 300000)  ; 5 min sin actividad
+(def sweep-ms 10000)       ; barrido de salas
+(def player-colors ["#2F6FD6" "#D64545" "#3FA34D" "#E0B92E"]) ; por :player/join-order
+
+;; Límites de recursos del servidor (auditoría S02: SEC-01, SEC-03)
+(def max-sessions 2000)                  ; tope del almacén de sesiones (expulsa la más antigua)
+(def session-ttl-ms 7200000)             ; 2 h sin uso → la sesión caduca
+(def max-events-per-second-global 400)   ; tope global además del límite por uid (T16)

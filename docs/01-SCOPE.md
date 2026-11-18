@@ -22,7 +22,7 @@ Días corridos desde el 2026-11-17 (decisión del líder): 3 + 5 + 6 = 14 días,
 | Hito | Etapa del brief | Días | Objetivo de validación | Cierra en ★ | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | M1 | Motor isomórfico | 17/11–19/11 (3) | Las reglas puras del juego y del lobby corren iguales en JVM y Node, y son deterministas | S01 | `[GO]` |
-| M2 | Vertical jugable en local | 20/11–24/11 (5) | La red real (Codespaces) soporta el WebSocket y una partida completa de 4 jugadores funciona en local | S02 | `[EN ESPERA]` |
+| M2 | Vertical jugable en local | 20/11–24/11 (5) | La red real (Codespaces) soporta el WebSocket y una partida completa de 4 jugadores funciona en local | S02 | `[ACTIVO]` |
 | M3 | Netcode y WAN | 25/11–30/11 (6) | 4 navegadores en al menos 2 redes distintas juegan una partida hasta el ganador con latencia mitigada | S03 | `[EN ESPERA]` |
 
 ## Compuertas de validación
@@ -33,7 +33,7 @@ Las condiciones son las del brief §9 (deterministas: las verifica un comando o 
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | M1 | Fallos y errores en los 7 escenarios BDD y en el test de convenciones del mapa | Gates `test`, `test-cljs` (`gates.sh`) | 0 fallos y 0 errores | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
 | M1 | Lint y formato | Gates `lint`, `format` | 0 fallos y 0 errores | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
-| M2 | Esqueleto WAN responde desde otra red | `/health` y eco por WebSocket en la URL pública de Codespaces | Responde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9, C30 |
+| M2 | Esqueleto WAN responde desde otra red | `/health` y eco por WebSocket en la URL pública del Cloudflare Quick Tunnel desde el Codespace (actualizado 2026-11-18) | Responde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9, C30 |
 | M2 | Arranque y binding del servidor | Log de arranque + `ss -tlnH` | Sin warnings; escucha **solo** en `127.0.0.1:3000` | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
 | M2 | Partida de 4 bots | `bots_test.clj` (gate `test`) | Verde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
 | M2 | Clon limpio sigue el README | Job de la CI (C29) | Verde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9, C29 |
@@ -49,7 +49,7 @@ Las condiciones son las del brief §9 (deterministas: las verifica un comando o 
 | Sprint | Días | Objetivo | Entregables | Módulos (brief) | Hito | ★ | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | S01 | 17/11–19/11 | Motor isomórfico puro y probado en JVM + Node | `config`, `campus` (`INITIAL-GRID` + `SPAWNS` con trazado aprobado), `grid`, `specs`, `engine`, `lobby` (`.cljc`); escenarios BDD 1–7 + test de convenciones del mapa; CI de GitHub Actions; `dev/assets.clj` con vista previa de la grilla; `LICENSE` (MIT) y licencia de assets (CC BY 4.0); ADR-0001 (actualizado 2026-11-17) | §2A, §4, §5 CORE, §5.1 R1–R11, §6, §8, C24, C26 | M1 | ★ | `[CERRADO]` |
-| S02 | 20/11–24/11 | Esqueleto WAN y vertical jugable en local | **Primero** esqueleto WAN (`/health` + eco WS, `.devcontainer`, prueba desde otra red); después servidor (http-kit, Sente, reitit, salas, reloj 20 Hz, seguridad §7), cliente básico (lobby, canvas con mapa limpio, sprites de jugador, bombas/explosiones/soft-blocks dibujados con código), `bots_test.clj`, `README.md`, `Dockerfile`, job de clon limpio | §2B, §2C, §3, §7, C1, C3, C21–C23, C28, C29, C30 | M2 | ★ | `[PENDIENTE]` |
+| S02 | 20/11–24/11 | Esqueleto WAN y vertical jugable en local | **Primero** esqueleto WAN (`/health` + eco WS, `.devcontainer`, prueba desde otra red); después servidor (http-kit, Sente, reitit, salas, reloj 20 Hz, seguridad §7), cliente básico (lobby, canvas con mapa limpio, sprites de jugador, bombas/explosiones/soft-blocks dibujados con código), `bots_test.clj`, `README.md`, `Dockerfile`, job de clon limpio | §2B, §2C, §3, §7, C1, C3, C21–C23, C28, C29, C30 | M2 | ★ | `[ACTIVO]` |
 | S03 | 25/11–30/11 | Netcode y partida WAN | Predicción propia, reconciliación e interpolación (C12), HUD, e2e Playwright con 4 contextos, gates `build` y `uber`, imagen Docker sin root, partida WAN con evidencia; sprites de bomba y explosión si hay tiempo | §2B, C12, C15, C23, §9 M3 | M3 | ★ | `[PENDIENTE]` |
 
 ## Detalle de hitos
@@ -61,7 +61,7 @@ Las condiciones son las del brief §9 (deterministas: las verifica un comando o 
 - **Criterios BDD del brief que aplican:** Escenario 1 — Movimiento válido e inválido · Escenario 2 — Detonación, destrucción de soft-block y eliminación · Escenario 3 — Sala llena · Escenario 4 — Reacción en cadena (R7) · Escenario 5 — Salida de la bomba propia (R9) y límite de bombas (R3) · Escenario 6 — Empate · Escenario 7 — Replay (propiedad con test.check).
 - **Fuera de alcance de este hito:** servidor, WebSocket, cliente y render (el overlay en el juego es del M2), Docker, README de juego.
 
-### M2 — Vertical jugable en local `[EN ESPERA]`
+### M2 — Vertical jugable en local `[ACTIVO]`
 
 - **Hipótesis que valida:** el WebSocket funciona por la red real (Codespaces / túnel) y una partida completa de 4 jugadores es jugable en local sobre el motor del M1.
 - **Entregables:** esqueleto WAN y `.devcontainer/devcontainer.json` (C30) **antes que nada**; `src/clj/razti/server/{core,ws,rooms,loop}.clj` con `RAZTI_HOST`, `RAZTI_PORT`, `RAZTI_ALLOWED_ORIGINS`, chequeo de `Origin`, CSRF de Sente, Malli en la frontera, límite de 30 entradas/s, máximo de salas y limpieza de salas (§7); `src/cljs/razti/client/{core,ws,input,render}.cljs` y `resources/public/{index.html,css/style.css}`; overlay de depuración de la grilla (C28); `test/clj/razti/server/bots_test.clj`; `README.md` con los dos caminos (C29); `Dockerfile` multistage; job de clon limpio en la CI.
@@ -151,8 +151,13 @@ Desde el brief. Construir cualquiera de estos requiere una **nueva versión del 
 | 2026-11-18 | S01 `[CERRADO]` (PR #1 y #2, `main@8f9dcb2`); M1 `[COMPLETADO]`, compuerta en `docs/milestones/M1-compuerta.md` a la espera del veredicto | Plan base | Líder |
 | 2026-11-18 | Veredicto de la compuerta M1: **Go** (6/6 métricas superan el umbral Go; `docs/milestones/M1-compuerta.md`). Se habilita el M2 | Plan base | Líder |
 | 2026-11-18 | Pendientes del S02: máximo de 3 salas simultáneas y cierre tras 5 minutos sin actividad (conflicto #5); colores de jugador azul (`#2F6FD6`), rojo, verde y amarillo (tonos exactos en el TDD del S02); Codespaces disponible en la cuenta del líder | Sprint siguiente | Líder |
+| 2026-11-18 | S02 iniciado el 18/11, 2 días antes de lo previsto (el S01 cerró antes); M2 pasa a `[ACTIVO]`. Las fechas del plan no cambian: el margen queda para el riesgo WAN. Rama `sprint/S02-vertical-local` | Plan base | Líder |
+| 2026-11-18 | **C30, camino WAN:** el enlace público sale de un Cloudflare Quick Tunnel que corre en el Codespace (o en una PC), no del reenvío de puertos de Codespaces: ese proxy reescribe `Origin`/`Host` y envía frames WebSocket sin máscara, que http-kit rechaza. Evidencia del checkpoint 1: WebSocket desde datos móviles por el túnel, eco ≈ 331 ms | Sprint actual (cambia el camino del brief, no su objetivo; se incorpora en el brief v1.2) | Líder (opción A) |
 
 ## Backlog
+
+- **Movimiento fluido (prioridad del S03, pedido del líder 2026-11-18):** interpolación de los demás jugadores y predicción del propio (C12); hoy el desplazamiento se ve celda por celda.
+- **Ajuste fino de la grilla** (D2): el trazado provisional es «pasable»; revisar con el overlay (G) en el S03.
 
 - **Vidas:** si se agregan, el jugador desconectado sigue en juego hasta agotarlas (R11). Requiere brief v1.2.
 - Regenerar la fila 1 de la hoja del personaje y el cuadro de la fila 3, columna 3 (brief §11.4, opcional).
