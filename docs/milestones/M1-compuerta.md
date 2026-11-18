@@ -61,4 +61,4 @@ Las métricas del M1 son deterministas (comandos). Valores medidos con `gates.sh
 ## Veredicto del líder
 | Veredicto | Motivo | Fecha | Líder |
 |---|---|---|---|
-| | | | |
+| GO | Las 6 métricas superan el umbral Go (gates en JVM, Node y CI; replay determinista 100/100); entregables 8/8 y BDD 7/7 en verde | 2026-11-18 | José Andrés Durand |

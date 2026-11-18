@@ -1,8 +1,8 @@
 # Estado del Proyecto: razti
 - **Última actualización:** 2026-11-18
-- **Hito activo:** ninguno · `M1 [COMPLETADO]`, compuerta pendiente de veredicto
+- **Hito activo:** ninguno · `M1 [GO]` (2026-11-18); M2 `[EN ESPERA]` hasta `--iniciar S02`
 - **Sprint en curso:** ninguno · `S01 [CERRADO]` (PR #1 y #2, `main@8f9dcb2`)
-- **Fase:** `Fase 1 cerrada · compuerta M1`
+- **Fase:** `Fase 1 cerrada (M1 Go) · preparación del S02`
 - **Perfil:** clojure-game
 
 ## Tareas completadas
@@ -44,4 +44,4 @@
 - [x] Repo público en GitHub: `JoseAndresDurand/razti` (2026-11-17); `main` y `sprint/S01-motor` publicadas.
 
 ## Siguiente paso inmediato
-- El líder da el veredicto de la compuerta M1: `/iterastack:itera-scope --veredicto M1 go|pivot|no-go`. Con Go: resolver conflicto #5, colores de jugador y Codespaces; luego `/iterastack:itera-scope --iniciar S02`.
+- Sin pendientes del líder para el S02 (conflicto #5 decidido: 3 salas, 5 minutos de inactividad). Siguiente: `/iterastack:itera-scope --iniciar S02` y `/iterastack:itera-tdd-unify --sprint S02`.

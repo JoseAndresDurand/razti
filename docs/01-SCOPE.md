@@ -21,7 +21,7 @@ Días corridos desde el 2026-11-17 (decisión del líder): 3 + 5 + 6 = 14 días,
 
 | Hito | Etapa del brief | Días | Objetivo de validación | Cierra en ★ | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| M1 | Motor isomórfico | 17/11–19/11 (3) | Las reglas puras del juego y del lobby corren iguales en JVM y Node, y son deterministas | S01 | `[COMPLETADO]` |
+| M1 | Motor isomórfico | 17/11–19/11 (3) | Las reglas puras del juego y del lobby corren iguales en JVM y Node, y son deterministas | S01 | `[GO]` |
 | M2 | Vertical jugable en local | 20/11–24/11 (5) | La red real (Codespaces) soporta el WebSocket y una partida completa de 4 jugadores funciona en local | S02 | `[EN ESPERA]` |
 | M3 | Netcode y WAN | 25/11–30/11 (6) | 4 navegadores en al menos 2 redes distintas juegan una partida hasta el ganador con latencia mitigada | S03 | `[EN ESPERA]` |
 
@@ -54,7 +54,7 @@ Las condiciones son las del brief §9 (deterministas: las verifica un comando o 
 
 ## Detalle de hitos
 
-### M1 — Motor isomórfico `[COMPLETADO]`
+### M1 — Motor isomórfico `[GO]`
 
 - **Hipótesis que valida:** las reglas del juego y del lobby pueden escribirse como funciones puras en `.cljc`, idénticas en JVM y Node, y deterministas (mismas entradas → mismo estado).
 - **Entregables:** `deps.edn` y `shadow-cljs.edn` (build `:test`) ya en el scaffold; `src/cljc/razti/shared/{config,campus,grid,specs,engine,lobby}.cljc`; `INITIAL-GRID` y `SPAWNS` con el trazado aprobado por el líder (§4, C27, C28); `test/cljc/razti/shared/{engine_test,lobby_test,replay_test}.cljc` y el test de convenciones del mapa; `.github/workflows/ci.yml` con los gates (C24); `dev/assets.clj` (mapa 800×800, hoja de sprites y vista previa PNG de la grilla para aprobar el trazado provisional; conflictos #2 y #3); `LICENSE` MIT y `resources/public/assets/LICENSE` CC BY 4.0 (conflicto #4); `docs/adr/0001-sprints-por-hito.md` (actualizado 2026-11-17).
@@ -130,7 +130,7 @@ Desde el brief. Construir cualquiera de estos requiere una **nueva versión del 
 | 2 | Aprobación del trazado en el M1 | "Aprobar el trazado de `INITIAL-GRID` y `SPAWNS` en el M1, con el overlay de la grilla dibujada sobre el mapa (C28)", pero el canvas y el mapa en el cliente llegan en el M2 | §11.5, C28 / §9 (M1 y M2) | **Decidido 2026-11-17:** en el S01, `dev/assets.clj` genera además una vista previa PNG (mapa 800×800 + grilla + celdas bloqueadas en rojo); el líder aprueba un trazado provisional con ella. El ajuste fino se hace en el S02 con el overlay del juego (solo datos, protegido por el test de convenciones). Brief v1.2 |
 | 3 | Script de assets sin hito | `dev/assets.clj` genera `resources/public/assets/` (C26), pero no aparece en el contenido de ningún hito; el M2 ya necesita el mapa y los sprites | C26, §3 / §9 | **Decidido 2026-11-17:** `dev/assets.clj` pasa al S01 (resuelto junto con #2). Brief v1.2 |
 | 4 | `LICENSE` sin hito y licencia de assets | `LICENSE` está en la estructura y el repo es público, pero ningún hito lo incluye; la licencia de los assets sigue sin decidir | §3, §11.6 / §9 | **Decidido 2026-11-17:** código MIT (`LICENSE`) y assets CC BY 4.0 (`resources/public/assets/LICENSE`), ambos en el S01 porque el repo se publica ahora. Brief v1.2 |
-| 5 | Límites de recursos sin valor | "máximo de salas simultáneas en `config.cljc`" y "una sala … que lleva X minutos sin actividad se elimina" no dan los números | §7 | PENDIENTE(líder) |
+| 5 | Límites de recursos sin valor | "máximo de salas simultáneas en `config.cljc`" y "una sala … que lleva X minutos sin actividad se elimina" no dan los números | §7 | **Decidido 2026-11-18:** máximo de 3 salas simultáneas por ahora (revisable); una sala con 5 minutos sin actividad se elimina |
 | 6 | Casos del lobby sin regla | No se define qué pasa si el creador sale con la sala en `:waiting` (quién pasa a ser `:room/owner`), quién puede pulsar "reiniciar", ni si se admiten nicknames repetidos en una sala | §5, §6 | **Decidido 2026-11-17:** (a) si el dueño sale en `:waiting`, el dueño pasa al jugador más antiguo por orden de llegada; sala vacía se elimina. (b) Solo el dueño reinicia. (c) Nickname repetido en la sala → `{:error :name-taken}`. Brief v1.2 |
 | 7 | Fixtures incompletas de los escenarios 4 y 5 | Escenario 4: no fija el contenido de la celda [3 2] entre las bombas. Escenario 5: no fija la grilla ni los ticks entre "se mueve a [1 2]" y "vuelve a [1 1]", que con R2 exige esperar 4 ticks de cooldown | §8 / §5.1 R2 | **Decidido 2026-11-17:** Escenario 4: [3 2] es `0` y la grilla de prueba es mínima (interior `0`, borde de hard-blocks). Escenario 5: entre el movimiento a [1 2] y el intento de volver pasan ≥ 4 ticks, con la bomba aún activa. Brief v1.2 |
 | 8 | Colocación de bomba en celda ocupada | R3 limita a 1 bomba por jugador, pero no dice si se puede colocar una bomba en una celda que ya tiene otra (dos jugadores en la misma celda) | §5.1 R3 | **Decidido 2026-11-17:** una bomba por celda; colocar sobre una celda con bomba no hace nada. Brief v1.2 |
@@ -149,6 +149,8 @@ Desde el brief. Construir cualquiera de estos requiere una **nueva versión del 
 | 2026-11-17 | S01 iniciado; M1 pasa a `[ACTIVO]`. Rama `sprint/S01-motor` | Plan base | Líder |
 | 2026-11-17 | Decisiones sobre los conflictos #1, #2, #3, #4, #6, #7 y #8; sin No-Go automático en las compuertas (Pivot por defecto). `dev/assets.clj`, `LICENSE`, licencia de assets y ADR-0001 entran al S01. Repo público en la cuenta personal del líder | Sprint actual (aclaraciones del brief, sin cambiar reglas de negocio) | Líder |
 | 2026-11-18 | S01 `[CERRADO]` (PR #1 y #2, `main@8f9dcb2`); M1 `[COMPLETADO]`, compuerta en `docs/milestones/M1-compuerta.md` a la espera del veredicto | Plan base | Líder |
+| 2026-11-18 | Veredicto de la compuerta M1: **Go** (6/6 métricas superan el umbral Go; `docs/milestones/M1-compuerta.md`). Se habilita el M2 | Plan base | Líder |
+| 2026-11-18 | Pendientes del S02: máximo de 3 salas simultáneas y cierre tras 5 minutos sin actividad (conflicto #5); colores de jugador azul (`#2F6FD6`), rojo, verde y amarillo (tonos exactos en el TDD del S02); Codespaces disponible en la cuenta del líder | Sprint siguiente | Líder |
 
 ## Backlog
 
@@ -159,8 +161,6 @@ Desde el brief. Construir cualquiera de estos requiere una **nueva versión del 
 ## Pendientes del líder
 
 - **Repo público en GitHub** (brief §11.7): cuenta personal, nombre `razti`. Lo crea el líder (comandos entregados el 2026-11-17).
-- **Codespaces disponible** en la cuenta que hospeda las pruebas (brief §11.8): bloquea el inicio del M2.
 - **Trazado de `INITIAL-GRID` y `SPAWNS`** (brief §11.5): aprobación provisional en el S01 con la vista previa PNG.
 - **Mercado piloto / audiencia** del producto (cabecera).
-- **Conflicto #5:** máximo de salas simultáneas y minutos de inactividad (§7); se necesita antes del S02.
 - **Brief v1.2:** incorporar las decisiones del 2026-11-17 (conflictos #1–#4 y #6–#8, R11, compuertas sin No-Go automático).
