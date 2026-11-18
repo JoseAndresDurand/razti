@@ -1,8 +1,8 @@
 # Estado del Proyecto: razti
 - **Última actualización:** 2026-11-18
-- **Hito activo:** ninguno · `M2 [COMPLETADO]`, compuerta pendiente de veredicto
+- **Hito activo:** ninguno · `M2 [GO]` (2026-11-18); M3 `[EN ESPERA]` hasta `--iniciar S03`
 - **Sprint en curso:** ninguno · `S02 [CERRADO]` (PR #5, `main@56fcb63`)
-- **Fase:** `Fase 2 cerrada · compuerta M2`
+- **Fase:** `Fase 2 cerrada (M2 Go) · preparación del S03`
 - **Perfil:** clojure-game
 
 ## Tareas completadas
@@ -61,4 +61,4 @@
 - [x] Borrador de la compuerta `docs/milestones/M2-compuerta.md` (veredicto pendiente).
 
 ## Siguiente paso inmediato
-- El líder da el veredicto de la compuerta M2: `/iterastack:itera-scope --veredicto M2 go|pivot|no-go`. Con Go: `/iterastack:itera-scope --iniciar S03` y `/iterastack:itera-tdd-unify --sprint S03` (prioridad: movimiento fluido).
+- `/iterastack:itera-scope --iniciar S03` y `/iterastack:itera-tdd-unify --sprint S03` (prioridad: movimiento fluido).

@@ -22,7 +22,7 @@ Días corridos desde el 2026-11-17 (decisión del líder): 3 + 5 + 6 = 14 días,
 | Hito | Etapa del brief | Días | Objetivo de validación | Cierra en ★ | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | M1 | Motor isomórfico | 17/11–19/11 (3) | Las reglas puras del juego y del lobby corren iguales en JVM y Node, y son deterministas | S01 | `[GO]` |
-| M2 | Vertical jugable en local | 20/11–24/11 (5) | La red real (Codespaces) soporta el WebSocket y una partida completa de 4 jugadores funciona en local | S02 | `[COMPLETADO]` |
+| M2 | Vertical jugable en local | 20/11–24/11 (5) | La red real (Codespaces) soporta el WebSocket y una partida completa de 4 jugadores funciona en local | S02 | `[GO]` |
 | M3 | Netcode y WAN | 25/11–30/11 (6) | 4 navegadores en al menos 2 redes distintas juegan una partida hasta el ganador con latencia mitigada | S03 | `[EN ESPERA]` |
 
 ## Compuertas de validación
@@ -61,7 +61,7 @@ Las condiciones son las del brief §9 (deterministas: las verifica un comando o 
 - **Criterios BDD del brief que aplican:** Escenario 1 — Movimiento válido e inválido · Escenario 2 — Detonación, destrucción de soft-block y eliminación · Escenario 3 — Sala llena · Escenario 4 — Reacción en cadena (R7) · Escenario 5 — Salida de la bomba propia (R9) y límite de bombas (R3) · Escenario 6 — Empate · Escenario 7 — Replay (propiedad con test.check).
 - **Fuera de alcance de este hito:** servidor, WebSocket, cliente y render (el overlay en el juego es del M2), Docker, README de juego.
 
-### M2 — Vertical jugable en local `[COMPLETADO]`
+### M2 — Vertical jugable en local `[GO]`
 
 - **Hipótesis que valida:** el WebSocket funciona por la red real (Codespaces / túnel) y una partida completa de 4 jugadores es jugable en local sobre el motor del M1.
 - **Entregables:** esqueleto WAN y `.devcontainer/devcontainer.json` (C30) **antes que nada**; `src/clj/razti/server/{core,ws,rooms,loop}.clj` con `RAZTI_HOST`, `RAZTI_PORT`, `RAZTI_ALLOWED_ORIGINS`, chequeo de `Origin`, CSRF de Sente, Malli en la frontera, límite de 30 entradas/s, máximo de salas y limpieza de salas (§7); `src/cljs/razti/client/{core,ws,input,render}.cljs` y `resources/public/{index.html,css/style.css}`; overlay de depuración de la grilla (C28); `test/clj/razti/server/bots_test.clj`; `README.md` con los dos caminos (C29); `Dockerfile` multistage; job de clon limpio en la CI.
@@ -154,6 +154,7 @@ Desde el brief. Construir cualquiera de estos requiere una **nueva versión del 
 | 2026-11-18 | S02 iniciado el 18/11, 2 días antes de lo previsto (el S01 cerró antes); M2 pasa a `[ACTIVO]`. Las fechas del plan no cambian: el margen queda para el riesgo WAN. Rama `sprint/S02-vertical-local` | Plan base | Líder |
 | 2026-11-18 | **C30, camino WAN:** el enlace público sale de un Cloudflare Quick Tunnel que corre en el Codespace (o en una PC), no del reenvío de puertos de Codespaces: ese proxy reescribe `Origin`/`Host` y envía frames WebSocket sin máscara, que http-kit rechaza. Evidencia del checkpoint 1: WebSocket desde datos móviles por el túnel, eco ≈ 331 ms | Sprint actual (cambia el camino del brief, no su objetivo; se incorpora en el brief v1.2) | Líder (opción A) |
 | 2026-11-18 | S02 `[CERRADO]` (PR #5, `main@56fcb63`, CI completa en verde); M2 `[COMPLETADO]`, compuerta en `docs/milestones/M2-compuerta.md` a la espera del veredicto | Plan base | Líder |
+| 2026-11-18 | Veredicto de la compuerta M2: **Go** (5/5 métricas superan el umbral Go; `docs/milestones/M2-compuerta.md`). Se habilita el M3 | Plan base | Líder |
 
 ## Backlog
 
