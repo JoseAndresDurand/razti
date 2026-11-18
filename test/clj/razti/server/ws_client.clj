@@ -116,9 +116,11 @@
   (await-pred #(:open? @(:state client)) timeout-ms))
 
 (defn pushes
-  "Eventos empujados por el servidor ([id datos]) recibidos hasta ahora."
+  "Eventos empujados por el servidor ([id datos]) recibidos hasta ahora.
+  Sente 1.22 (`:wrap-recv-evs? false` por defecto) los entrega sin envolver
+  en :chsk/recv: son todos los que no son :chsk/*."
   [client]
-  (keep (fn [[id data]] (when (= id :chsk/recv) data)) @(:events client)))
+  (remove (fn [[id]] (= "chsk" (namespace id))) @(:events client)))
 
 (defn await-push
   "Primer evento empujado que cumple pred, esperando hasta timeout-ms."

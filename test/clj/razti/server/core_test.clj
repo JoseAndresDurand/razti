@@ -1,6 +1,7 @@
 (ns razti.server.core-test
   (:require [clojure.string :as str]
             [clojure.test :refer [deftest is testing]]
+            [org.httpkit.server :as http]
             [ring.middleware.session.memory :as memory]
             [razti.server.core :as core]
             [razti.server.ws-client :as c])
@@ -93,6 +94,17 @@
          (.connect s (InetSocketAddress. addr (int port)) 500)
          true)
        (catch Exception _ false)))
+
+(deftest ^:S02 escenario-S02-1-binding-por-defecto
+  (testing "S02-1. Con la configuración por defecto, http-kit arranca en 127.0.0.1 (QA-04)"
+    (let [captured (atom nil)
+          run-server http/run-server
+          port (free-port)]
+      (with-redefs [http/run-server (fn [h opts] (reset! captured opts) (run-server h opts))]
+        (let [system (core/start! (core/env-config {"RAZTI_PORT" (str port)}))]
+          (core/stop! system)))
+      (is (= "127.0.0.1" (:ip @captured)))
+      (is (= port (:port @captured))))))
 
 (deftest ^:S02 escenario-S02-1-salud-y-binding
   (with-server

@@ -33,7 +33,7 @@ Las condiciones son las del brief §9 (deterministas: las verifica un comando o 
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | M1 | Fallos y errores en los 7 escenarios BDD y en el test de convenciones del mapa | Gates `test`, `test-cljs` (`gates.sh`) | 0 fallos y 0 errores | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
 | M1 | Lint y formato | Gates `lint`, `format` | 0 fallos y 0 errores | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
-| M2 | Esqueleto WAN responde desde otra red | `/health` y eco por WebSocket en la URL pública de Codespaces | Responde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9, C30 |
+| M2 | Esqueleto WAN responde desde otra red | `/health` y eco por WebSocket en la URL pública del Cloudflare Quick Tunnel desde el Codespace (actualizado 2026-11-18) | Responde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9, C30 |
 | M2 | Arranque y binding del servidor | Log de arranque + `ss -tlnH` | Sin warnings; escucha **solo** en `127.0.0.1:3000` | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
 | M2 | Partida de 4 bots | `bots_test.clj` (gate `test`) | Verde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
 | M2 | Clon limpio sigue el README | Job de la CI (C29) | Verde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9, C29 |
@@ -152,8 +152,12 @@ Desde el brief. Construir cualquiera de estos requiere una **nueva versión del 
 | 2026-11-18 | Veredicto de la compuerta M1: **Go** (6/6 métricas superan el umbral Go; `docs/milestones/M1-compuerta.md`). Se habilita el M2 | Plan base | Líder |
 | 2026-11-18 | Pendientes del S02: máximo de 3 salas simultáneas y cierre tras 5 minutos sin actividad (conflicto #5); colores de jugador azul (`#2F6FD6`), rojo, verde y amarillo (tonos exactos en el TDD del S02); Codespaces disponible en la cuenta del líder | Sprint siguiente | Líder |
 | 2026-11-18 | S02 iniciado el 18/11, 2 días antes de lo previsto (el S01 cerró antes); M2 pasa a `[ACTIVO]`. Las fechas del plan no cambian: el margen queda para el riesgo WAN. Rama `sprint/S02-vertical-local` | Plan base | Líder |
+| 2026-11-18 | **C30, camino WAN:** el enlace público sale de un Cloudflare Quick Tunnel que corre en el Codespace (o en una PC), no del reenvío de puertos de Codespaces: ese proxy reescribe `Origin`/`Host` y envía frames WebSocket sin máscara, que http-kit rechaza. Evidencia del checkpoint 1: WebSocket desde datos móviles por el túnel, eco ≈ 331 ms | Sprint actual (cambia el camino del brief, no su objetivo; se incorpora en el brief v1.2) | Líder (opción A) |
 
 ## Backlog
+
+- **Movimiento fluido (prioridad del S03, pedido del líder 2026-11-18):** interpolación de los demás jugadores y predicción del propio (C12); hoy el desplazamiento se ve celda por celda.
+- **Ajuste fino de la grilla** (D2): el trazado provisional es «pasable»; revisar con el overlay (G) en el S03.
 
 - **Vidas:** si se agregan, el jugador desconectado sigue en juego hasta agotarlas (R11). Requiere brief v1.2.
 - Regenerar la fila 1 de la hoja del personaje y el cuadro de la fila 3, columna 3 (brief §11.4, opcional).

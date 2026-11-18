@@ -38,7 +38,9 @@
 (deftest ^:S02 frontera-cerrada
   (testing "S02: eventos nuevos válidos"
     (is (specs/valid-client-event? [:razti/leave-room {}]))
-    (is (specs/valid-client-event? [:razti/echo {:t 1}])))
+    (is (specs/valid-client-event? [:razti/echo {:t 1}]))
+    (is (specs/valid-client-event? [:razti/sync {}]))
+    (is (not (specs/valid-client-event? [:razti/sync {:code "UNSA2"}]))))
   (testing "SEC-03: mapas cerrados, sin claves extra (ni :player-id del cliente)"
     (is (not (specs/valid-client-event? [:razti/create-room {:name "Ana" :player-id "p9"}])))
     (is (not (specs/valid-client-event? [:razti/input {:seq 1 :action :bomb :player-id "p9"}])))

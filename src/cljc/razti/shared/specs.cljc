@@ -91,6 +91,7 @@
    [:razti/start-game [:tuple [:= :razti/start-game] [:map {:closed true}]]]
    [:razti/restart [:tuple [:= :razti/restart] [:map {:closed true}]]]
    [:razti/echo [:tuple [:= :razti/echo] [:map {:closed true} [:t Counter]]]]
+   [:razti/sync [:tuple [:= :razti/sync] [:map {:closed true}]]]
    [:razti/input [:tuple [:= :razti/input] [:map {:closed true}
                                             [:seq Seq]
                                             [:action [:enum :move :bomb]]

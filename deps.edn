@@ -47,4 +47,5 @@
 
   ;; Uberjar: clojure -T:build uber
   :build {:deps {io.github.clojure/tools.build {:mvn/version "0.10.14"}}
+          :jvm-opts ["-Djava.io.tmpdir=.cpcache"] ; T22: /tmp es de solo lectura en el sandbox; .cpcache existe antes de la JVM
           :ns-default build}}}

@@ -8,10 +8,15 @@
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.session :refer [wrap-session]]
-            [ring.middleware.session.memory :as memory]
+            [razti.shared.config :as config]
+            [razti.server.log :refer [log]]
+            [razti.server.loop :as loop]
+            [razti.server.rooms :as rooms]
+            [razti.server.sessions :as sessions]
             [razti.server.ws :as ws])
   (:import (java.security SecureRandom)
-           (java.util Base64 UUID))
+           (java.util Base64 UUID)
+           (java.util.concurrent ScheduledExecutorService TimeUnit))
   (:gen-class))
 
 (set! *warn-on-reflection* true)
@@ -42,7 +47,7 @@
                     (remove str/blank?))
          valid-extra (filter #(re-matches origin-re %) extra)]
      (doseq [o (remove #(re-matches origin-re %) extra)]
-       (ws/log :warn "origen ignorado en RAZTI_ALLOWED_ORIGINS:" (pr-str o)))
+       (log :warn "origen ignorado en RAZTI_ALLOWED_ORIGINS:" (pr-str o)))
      {:host host
       :port port
       :dev? (= "true" dev-prop)
@@ -119,21 +124,39 @@
 ;; Ciclo de vida
 
 (defn start!
-  "Arranca el sistema. Con :port 0 usa un puerto libre (pruebas)."
+  "Arranca el sistema: salas, reloj, barrido, router y http-kit."
   [cfg]
-  (let [system {:cfg cfg
-                :store (memory/memory-store)
-                :sente (ws/make-sente cfg)}
+  (let [^ScheduledExecutorService executor (loop/new-executor)
+        now-ms #(System/currentTimeMillis)
+        store (sessions/bounded-store {:max-entries config/max-sessions
+                                       :ttl-ms config/session-ttl-ms
+                                       :now-fn now-ms})
+        system {:cfg cfg
+                :store store
+                :purge-sessions! #(sessions/purge! store %)
+                :sente (ws/make-sente cfg)
+                :rooms (rooms/new-state)
+                :limiter (atom {})
+                :executor executor
+                :now-ms now-ms}
+        sweep-task (fn []
+                     (try (ws/sweep! system)
+                          (catch Throwable t (log :error "fallo en el barrido:" (.getMessage t)))))
+        _ (.scheduleWithFixedDelay executor ^Runnable sweep-task
+                                   (long config/sweep-ms) (long config/sweep-ms) TimeUnit/MILLISECONDS)
         system (assoc system :stop-router (ws/start-router! system))
         server (http/run-server (app system) {:ip (:host cfg)
                                               :port (:port cfg)
                                               :legacy-return-value? false})
         port (http/server-port server)]
-    (ws/log :info (str "RAZTI escuchando en http://" (:host cfg) ":" port))
+    (log :info (str "RAZTI escuchando en http://" (:host cfg) ":" port))
     (assoc system :server server :port port)))
 
-(defn stop! [{:keys [server stop-router]}]
+(defn stop! [{:keys [server stop-router ^ScheduledExecutorService executor]}]
   (when stop-router (stop-router))
+  (when executor
+    (.shutdownNow executor)
+    (.awaitTermination executor 2 TimeUnit/SECONDS))
   (when server
     (when-let [p (http/server-stop! server {:timeout 100})]
       (deref p 5000 nil))))

@@ -62,14 +62,14 @@ Solo las de `deps.edn` y `package.json` actuales (versiones exactas). **M2:** el
 - **T19 Cabeceras:** CSP `default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'` (con `-Drazti.dev=true`, `connect-src` añade `ws://127.0.0.1:9630 ws://localhost:9630` para la recarga de shadow-cljs); `X-Content-Type-Options: nosniff`; `Referrer-Policy: same-origin` (actualizado 2026-11-18: Sente usa el Referer cuando falta `Origin`).
 - **T20 Colores de jugador** por `:player/join-order`: azul `#2F6FD6`, rojo `#D64545`, verde `#3FA34D`, amarillo `#E0B92E`; cambio de color por rango de tono (200°–250°).
 - **T21 Esqueleto WAN:** barra de estado con el tipo de conexión y el eco en ms; la compuerta exige «WebSocket», no Ajax.
-- **T22 `uber` en el sandbox:** `-Djava.io.tmpdir=target/tmp` en el alias `:build` y `target/tmp` creado antes de compilar.
+- **T22 `uber` en el sandbox:** `-Djava.io.tmpdir=.cpcache` en el alias `:build` (actualizado 2026-11-18: `.cpcache` existe antes de arrancar la JVM; con `target/tmp` la JVM avisaba que no existía).
 - **SEC-03/SEC-04 (backlog del S01):** `ClientEvent` cerrado y `valid-client-event?` que nunca lanza.
 
 ### 1.6 Datos bloqueantes
 - **Trazado de `INITIAL-GRID`/`SPAWNS`:** lo propone Claude en el S01 y el líder lo aprueba (provisional) en el checkpoint 2 con `target/grid-preview.png`.
 - Conflicto #5 y colores de jugador: resueltos (3 salas, 5 min; colores T20 aprobados).
 - **Etiquetas exactas de imágenes** (Docker de build y runtime, devcontainer): se resuelven en el build del S02; si no hay red, las aporta el líder.
-- **Checkpoint WAN (S02):** requiere que el líder abra un Codespace y pruebe desde otra red.
+- **Checkpoint WAN (S02):** superado el 2026-11-18 con Cloudflare Quick Tunnel desde el Codespace (WebSocket, eco ≈ 331 ms desde datos móviles). El reenvío de puertos de Codespaces queda descartado para el juego (reescribe `Origin`/`Host` y envía frames sin máscara).
 
 ### 1.7 Prevención transversal (`knowledge/errores-frecuentes.md`)
 - **QA-TDD-DRIFT:** al cambiar el estado de un sprint, actualizar en el mismo cambio `01-SCOPE.md`, `STATE.md`, `tdd/INDEX.md` y la cabecera de la sección del sprint.
@@ -83,6 +83,11 @@ Solo las de `deps.edn` y `package.json` actuales (versiones exactas). **M2:** el
 | 2026-11-18 | Build S01: `empty-room?` cuenta jugadores conectados (con T7 los desconectados siguen en el mapa durante la partida). Trazado provisional de `INITIAL-GRID`/`SPAWNS` aprobado por el líder (D2) |
 | 2026-11-18 | TDD del S02 (`M2.md`): núcleo actualizado al M2; resoluciones T11–T22 y SEC-03/04 |
 | 2026-11-18 | El líder aprueba T11–T22 (incluidos los colores de T20) |
+| 2026-11-18 | Auditoría S02 (QA + seguridad, sin P0/P1; 10 P2 reparados). Nuevos: `razti.server.sessions` (almacén de sesiones con TTL de 2 h y tope de 2000, purgado en el barrido; SEC-01); `config/max-events-per-second-global` 400 además de T16 y el límite aplicado antes de validar, con purga del limiter (SEC-02/03); el reloj se retira solo cuando su sala no existe o no está en `:playing` y `remove-room!` cancela el reloj que quita (QA-01/02); `join!` devuelve `:room-not-found` si la sala desaparece (QA-03); `stop!` espera al executor (QA-05); el cliente vuelve al lobby si `sync` no encuentra sala (QA-06) |
+| 2026-11-18 | Build S02 paso 8: T22 con `.cpcache`; `Dockerfile` con `node:22.23.5-bookworm-slim`, `clojure:temurin-21-tools-deps-1.12.6.1673-bookworm-slim` y `eclipse-temurin:21.0.13_9-jre-noble` (etiquetas exactas, sin digest); jobs de CI `clean-clone` y `docker`; README con el camino WAN de la opción A |
+| 2026-11-18 | Checkpoint 3: evento nuevo `[:razti/sync {}]` (cerrado) → `{:ok {:room vista-o-nil}}`; el cliente lo pide al abrir la conexión para recuperar su sala tras recargar u abrir otra pestaña de la misma sesión (antes quedaba atrapado: «Ya estás en una sala» sin forma de salir) |
+| 2026-11-18 | Build S02 paso 4: `log` pasa a `razti.server.log` y `send-room!` a `rooms` (evita el ciclo ws↔loop); sin `:executor` el reloj no arranca (pruebas del router). Sente 1.22 entrega los eventos del servidor sin envolver en `:chsk/recv` (`:wrap-recv-evs? false`): cliente y bots tratan como push todo lo que no es `:chsk/*` |
+| 2026-11-18 | Decisión del líder (opción A): camino WAN = Codespaces + Cloudflare Quick Tunnel (`cloudflared` 2026.10.7, `RAZTI_ALLOWED_ORIGINS` con la URL del túnel); sin aceptar el origen reescrito por Codespaces. README, devcontainer y CI se ajustan en el paso 8 |
 | 2026-11-18 | Checkpoint 1 en Codespaces: el proxy de puertos reenvía frames WebSocket sin máscara y http-kit los rechaza (`unmasked client to server frame`); Ajax recibe 403. Cambios: `Referrer-Policy: same-origin` (T19) y registro del motivo de cada rechazo de Sente (sin tokens). Siguiente: diagnóstico del 403 y prueba con Cloudflare Quick Tunnel |
 | 2026-11-18 | Build S02 paso 2: el CSP de desarrollo (`-Drazti.dev=true`) añade también `'unsafe-eval'` en `script-src` (la carga en caliente de shadow-cljs lo necesita; en `:run` y en release no). El binding de S02-1 se prueba conectando a las IPs no-loopback del equipo; sin ninguna (sandbox), se verifica con `ss -tlnH`. El devcontainer usa `mcr.microsoft.com/devcontainers/java:3.1.9-21-bookworm` + feature `node:1` (22) y `.devcontainer/post-create.sh` |
 | 2026-11-18 | Auditoría S01 (QA + seguridad, sin P0/P1). QA-01: `new-room` deja `:room/next-id 1` (el creador usa el 0). SEC-01/02: `specs.cljc` con fin de texto estricto y límites en todos los esquemas (§5 actualizado en el código; ver `docs/audits/S01-2026-11-18-*.md`) |
