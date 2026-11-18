@@ -1,8 +1,8 @@
 # Estado del Proyecto: razti
 - **Última actualización:** 2026-11-17
-- **Hito activo:** ninguno (M1 `[EN ESPERA]`; se activa con `/itera-scope --iniciar S01`)
-- **Sprint en curso:** ninguno
-- **Fase:** `Fase 0 - Scaffolding y blindaje de entorno`
+- **Hito activo:** `M1 [ACTIVO]: Motor isomórfico` (17/11–19/11)
+- **Sprint en curso:** `S01 [ACTIVO]` ★ (cierra M1) · rama `sprint/S01-motor`
+- **Fase:** `Fase 1 - S01 · especificación (TDD) y construcción del motor`
 - **Perfil:** clojure-game
 
 ## Tareas completadas
@@ -26,7 +26,9 @@
 
 ## Bloqueos activos
 - [x] MVP Scope Brief v1.1 APROBADO (2026-11-17): fuente `1-files/MVP-SCOPE-BRIEF-RAZTI-v1.1.md`.
-- [ ] Licencia de los assets: PENDIENTE(líder).
+- [x] Licencias decididas (2026-11-17): código MIT (`LICENSE`), assets CC BY 4.0 (`resources/public/assets/LICENSE`).
+- [x] Conflictos del brief #1–#4 y #6–#8 decididos (2026-11-17, ver `docs/01-SCOPE.md`); #5 pendiente antes del S02.
+- [ ] Repo público en GitHub (`razti`, cuenta personal): lo crea el líder.
 
 ## Siguiente paso inmediato
-- `/iterastack:itera-scope --iniciar S01` y después `/iterastack:itera-tdd-unify --sprint S01`.
+- `/iterastack:itera-tdd-unify --sprint S01` (no existe `docs/tdd/`), y después `/iterastack:itera-build --sprint S01`.
