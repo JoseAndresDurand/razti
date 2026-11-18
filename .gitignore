@@ -1,0 +1,25 @@
+# Clojure / ClojureScript
+.cpcache/
+.shadow-cljs/
+target/
+node_modules/
+resources/public/js/
+.clj-kondo/.cache/
+.nrepl-port
+
+# Secretos
+.env*
+!.env.example
+
+# Stubs del sandbox de Claude Code
+.bashrc
+.zshrc
+.profile
+.bash_profile
+.zprofile
+.gitconfig
+.gitmodules
+.mcp.json
+.ripgreprc
+.idea
+.vscode

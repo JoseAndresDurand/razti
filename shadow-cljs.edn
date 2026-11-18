@@ -1,0 +1,18 @@
+{:deps {:aliases [:cljs]}
+
+ ;; Sin servidor HTTP propio: el juego lo sirve el servidor Clojure (un solo origen).
+ :dev-http {}
+
+ ;; Servidores internos de shadow-cljs (UI, websocket de recarga, nREPL) solo en localhost.
+ :http {:host "127.0.0.1"}
+ :nrepl {:host "127.0.0.1"}
+
+ :builds
+ {:app {:target :browser
+        :output-dir "resources/public/js"
+        :asset-path "/js"
+        :modules {:main {:init-fn razti.client.core/init}}}
+
+  :test {:target :node-test
+         :output-to "target/test/node-tests.js"
+         :ns-regexp "-test$"}}}
