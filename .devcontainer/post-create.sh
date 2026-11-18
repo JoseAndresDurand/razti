@@ -4,6 +4,9 @@
 set -euo pipefail
 
 CLOJURE_VERSION="1.12.6.1673"
+# El postCreateCommand no tiene terminal interactiva: sin esto, corepack se
+# queda esperando la confirmación para descargar pnpm.
+export COREPACK_ENABLE_DOWNLOAD_PROMPT=0
 
 if ! command -v clojure >/dev/null 2>&1; then
   tmp="$(mktemp -d)"

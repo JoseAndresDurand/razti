@@ -61,7 +61,7 @@
       (is (not (str/includes? csp "unsafe-eval")))
       (is (not (str/includes? csp "9630")))
       (is (= "nosniff" (get-in index [:headers "X-Content-Type-Options"])))
-      (is (= "no-referrer" (get-in index [:headers "Referrer-Policy"]))))
+      (is (= "same-origin" (get-in index [:headers "Referrer-Policy"]))))
     (testing "Ruta inexistente → 404"
       (is (= 404 (:status (get-req h "/no-existe")))))
     (testing "En desarrollo el CSP admite la recarga de shadow-cljs"

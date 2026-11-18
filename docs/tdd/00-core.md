@@ -59,7 +59,7 @@ Solo las de `deps.edn` y `package.json` actuales (versiones exactas). **M2:** el
 - **T16 Límite de entradas:** ventana deslizante de 1 s por uid, máximo 30 eventos; el exceso se descarta sin respuesta.
 - **T17 Una sala por uid:** crear o unirse estando en otra sala → `{:error :already-in-room}`.
 - **T18 Desconexión:** `:chsk/uidport-close` → `lobby/leave-room` (R11).
-- **T19 Cabeceras:** CSP `default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'` (con `-Drazti.dev=true`, `connect-src` añade `ws://127.0.0.1:9630 ws://localhost:9630` para la recarga de shadow-cljs); `X-Content-Type-Options: nosniff`; `Referrer-Policy: no-referrer`.
+- **T19 Cabeceras:** CSP `default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'` (con `-Drazti.dev=true`, `connect-src` añade `ws://127.0.0.1:9630 ws://localhost:9630` para la recarga de shadow-cljs); `X-Content-Type-Options: nosniff`; `Referrer-Policy: same-origin` (actualizado 2026-11-18: Sente usa el Referer cuando falta `Origin`).
 - **T20 Colores de jugador** por `:player/join-order`: azul `#2F6FD6`, rojo `#D64545`, verde `#3FA34D`, amarillo `#E0B92E`; cambio de color por rango de tono (200°–250°).
 - **T21 Esqueleto WAN:** barra de estado con el tipo de conexión y el eco en ms; la compuerta exige «WebSocket», no Ajax.
 - **T22 `uber` en el sandbox:** `-Djava.io.tmpdir=target/tmp` en el alias `:build` y `target/tmp` creado antes de compilar.
@@ -83,6 +83,7 @@ Solo las de `deps.edn` y `package.json` actuales (versiones exactas). **M2:** el
 | 2026-11-18 | Build S01: `empty-room?` cuenta jugadores conectados (con T7 los desconectados siguen en el mapa durante la partida). Trazado provisional de `INITIAL-GRID`/`SPAWNS` aprobado por el líder (D2) |
 | 2026-11-18 | TDD del S02 (`M2.md`): núcleo actualizado al M2; resoluciones T11–T22 y SEC-03/04 |
 | 2026-11-18 | El líder aprueba T11–T22 (incluidos los colores de T20) |
+| 2026-11-18 | Checkpoint 1 en Codespaces: el proxy de puertos reenvía frames WebSocket sin máscara y http-kit los rechaza (`unmasked client to server frame`); Ajax recibe 403. Cambios: `Referrer-Policy: same-origin` (T19) y registro del motivo de cada rechazo de Sente (sin tokens). Siguiente: diagnóstico del 403 y prueba con Cloudflare Quick Tunnel |
 | 2026-11-18 | Build S02 paso 2: el CSP de desarrollo (`-Drazti.dev=true`) añade también `'unsafe-eval'` en `script-src` (la carga en caliente de shadow-cljs lo necesita; en `:run` y en release no). El binding de S02-1 se prueba conectando a las IPs no-loopback del equipo; sin ninguna (sandbox), se verifica con `ss -tlnH`. El devcontainer usa `mcr.microsoft.com/devcontainers/java:3.1.9-21-bookworm` + feature `node:1` (22) y `.devcontainer/post-create.sh` |
 | 2026-11-18 | Auditoría S01 (QA + seguridad, sin P0/P1). QA-01: `new-room` deja `:room/next-id 1` (el creador usa el 0). SEC-01/02: `specs.cljc` con fin de texto estricto y límites en todos los esquemas (§5 actualizado en el código; ver `docs/audits/S01-2026-11-18-*.md`) |
 

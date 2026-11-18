@@ -14,14 +14,34 @@
   [level & parts]
   (println (str (Instant/now)) (str/upper-case (name level)) (str/join " " parts)))
 
+(defn- describe-rejection
+  "Datos de diagnóstico de un rechazo, sin tokens ni cookies."
+  [req]
+  (let [h (:headers req)]
+    (str (name (or (:request-method req) :?)) " " (:uri req)
+         " origin=" (pr-str (get h "origin"))
+         " referer?=" (contains? h "referer")
+         " host=" (pr-str (get h "host"))
+         " x-forwarded-host=" (pr-str (get h "x-forwarded-host"))
+         " sesión?=" (boolean (get-in req [:session :csrf-token]))
+         " token-cliente?=" (boolean (or (get-in req [:params :csrf-token])
+                                         (get h "x-csrf-token"))))))
+
 (defn make-sente
   "Canal de Sente con Transit, orígenes permitidos y CSRF por defecto
-  (lee [:session :csrf-token], T11; uid desde [:session :uid], T12)."
+  (lee [:session :csrf-token], T11; uid desde [:session :uid], T12).
+  Cada rechazo se registra con su motivo (diagnóstico de proxies)."
   [cfg]
   (sente/make-channel-socket-server!
    (get-sch-adapter)
    {:packer (transit/get-packer)
-    :allowed-origins (:allowed-origins cfg)}))
+    :allowed-origins (:allowed-origins cfg)
+    :bad-origin-fn (fn [req]
+                     (log :warn "rechazo por origen:" (describe-rejection req))
+                     {:status 403 :body "Unauthorized origin"})
+    :bad-csrf-fn (fn [req]
+                   (log :warn "rechazo por CSRF:" (describe-rejection req))
+                   {:status 403 :body "Bad CSRF token"})}))
 
 (defn- reply! [?reply-fn value]
   (when ?reply-fn (?reply-fn value)))

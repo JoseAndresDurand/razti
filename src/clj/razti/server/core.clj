@@ -73,7 +73,7 @@
 (defn- wrap-security-headers [handler dev?]
   (let [headers {"Content-Security-Policy" (content-security-policy dev?)
                  "X-Content-Type-Options" "nosniff"
-                 "Referrer-Policy" "no-referrer"}]
+                 "Referrer-Policy" "same-origin"}]
     (fn [req]
       (let [resp (handler req)]
         (if (map? resp)
