@@ -1,8 +1,8 @@
 # Estado del Proyecto: razti
 - **Última actualización:** 2026-11-18
-- **Hito activo:** `M1 [ACTIVO]: Motor isomórfico` (17/11–19/11)
-- **Sprint en curso:** `S01 [ACTIVO]` ★ (cierra M1) · rama `sprint/S01-motor`
-- **Fase:** `Fase 1 - S01 · listo para PR (2026-11-18T00:19:21-05:00)`
+- **Hito activo:** ninguno · `M1 [COMPLETADO]`, compuerta pendiente de veredicto
+- **Sprint en curso:** ninguno · `S01 [CERRADO]` (PR #1 y #2, `main@8f9dcb2`)
+- **Fase:** `Fase 1 cerrada · compuerta M1`
 - **Perfil:** clojure-game
 
 ## Tareas completadas
@@ -24,7 +24,9 @@
 - [x] `.github/workflows/ci.yml` con acciones fijadas por SHA (pendiente de su primera ejecución en GitHub)
 - [x] Auditoría QA + seguridad (`docs/audits/S01-2026-11-18-{qa,sec}.md`): sin P0/P1; 7 P2 reparados; 8 P3 al backlog
 - [x] `itera-ship` (2026-11-18T00:19:21-05:00): gates del M1 en verde (`test`, `test-cljs-build`, `test-cljs`, `lint`, `format`); `build` y `uber` no aplican hasta S02/S03 (TDD §8, decisión del líder); sin P0; sin secretos en el diff
-- [ ] Commit, push, PR y merge (líder)
+- [x] Commit, push, PR y merge (líder): PR #1 (docs) y PR #2 (código); CI en verde
+- [x] Retro (`docs/retro/S01.md`) y propuesta a `knowledge/` aprobada y escrita
+- [x] Borrador de la compuerta `docs/milestones/M1-compuerta.md` (veredicto pendiente)
 - Archivos creados: `src/cljc/razti/shared/{config,campus,grid,specs,engine,lobby}.cljc`, `test/cljc/razti/shared/{fixtures,engine_test,lobby_test,replay_test,campus_test}.cljc`, `dev/assets.clj`, `resources/public/assets/{map-campus.jpeg,player-sprites.png}`, `.github/workflows/ci.yml`. Modificados: `deps.edn`, `docs/tdd/{M1,00-core}.md`, `docs/STATE.md`, `docs/LEDGER.md`.
 
 ## Advertencias del diagnóstico
@@ -42,4 +44,4 @@
 - [x] Repo público en GitHub: `JoseAndresDurand/razti` (2026-11-17); `main` y `sprint/S01-motor` publicadas.
 
 ## Siguiente paso inmediato
-- El líder hace commit, push y PR de `sprint/S01-motor` → `main`; con la CI en verde, merge. Después: `/iterastack:itera-retro` (S01 ★ cierra M1: compuerta y veredicto Go/Pivot/No-Go).
+- El líder da el veredicto de la compuerta M1: `/iterastack:itera-scope --veredicto M1 go|pivot|no-go`. Con Go: resolver conflicto #5, colores de jugador y Codespaces; luego `/iterastack:itera-scope --iniciar S02`.

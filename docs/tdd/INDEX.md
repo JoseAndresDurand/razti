@@ -23,6 +23,6 @@
 
 | Hito | Sprint | Contenido | Estado | Archivo |
 | :--- | :--- | :--- | :--- | :--- |
-| M1 · Motor isomórfico | S01 | config, campus, grid, specs, engine, lobby; BDD 1–7; test del mapa; `dev/assets.clj` + vista previa; CI | `[EN CURSO]` | `M1.md` |
+| M1 · Motor isomórfico | S01 | config, campus, grid, specs, engine, lobby; BDD 1–7; test del mapa; `dev/assets.clj` + vista previa; CI | `[HECHO]` | `M1.md` |
 | M2 · Vertical jugable en local | S02 | Esqueleto WAN, servidor, cliente básico, bots, README, Dockerfile, clon limpio | `[POR ESPECIFICAR]` | `M2.md` (no creado) |
 | M3 · Netcode y WAN | S03 | Predicción, HUD, e2e, build/uber, Docker sin root, partida WAN | `[POR ESPECIFICAR]` | `M3.md` (no creado) |

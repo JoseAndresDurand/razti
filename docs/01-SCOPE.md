@@ -21,7 +21,7 @@ Días corridos desde el 2026-11-17 (decisión del líder): 3 + 5 + 6 = 14 días,
 
 | Hito | Etapa del brief | Días | Objetivo de validación | Cierra en ★ | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| M1 | Motor isomórfico | 17/11–19/11 (3) | Las reglas puras del juego y del lobby corren iguales en JVM y Node, y son deterministas | S01 | `[ACTIVO]` |
+| M1 | Motor isomórfico | 17/11–19/11 (3) | Las reglas puras del juego y del lobby corren iguales en JVM y Node, y son deterministas | S01 | `[COMPLETADO]` |
 | M2 | Vertical jugable en local | 20/11–24/11 (5) | La red real (Codespaces) soporta el WebSocket y una partida completa de 4 jugadores funciona en local | S02 | `[EN ESPERA]` |
 | M3 | Netcode y WAN | 25/11–30/11 (6) | 4 navegadores en al menos 2 redes distintas juegan una partida hasta el ganador con latencia mitigada | S03 | `[EN ESPERA]` |
 
@@ -48,13 +48,13 @@ Las condiciones son las del brief §9 (deterministas: las verifica un comando o 
 
 | Sprint | Días | Objetivo | Entregables | Módulos (brief) | Hito | ★ | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S01 | 17/11–19/11 | Motor isomórfico puro y probado en JVM + Node | `config`, `campus` (`INITIAL-GRID` + `SPAWNS` con trazado aprobado), `grid`, `specs`, `engine`, `lobby` (`.cljc`); escenarios BDD 1–7 + test de convenciones del mapa; CI de GitHub Actions; `dev/assets.clj` con vista previa de la grilla; `LICENSE` (MIT) y licencia de assets (CC BY 4.0); ADR-0001 (actualizado 2026-11-17) | §2A, §4, §5 CORE, §5.1 R1–R11, §6, §8, C24, C26 | M1 | ★ | `[ACTIVO]` |
+| S01 | 17/11–19/11 | Motor isomórfico puro y probado en JVM + Node | `config`, `campus` (`INITIAL-GRID` + `SPAWNS` con trazado aprobado), `grid`, `specs`, `engine`, `lobby` (`.cljc`); escenarios BDD 1–7 + test de convenciones del mapa; CI de GitHub Actions; `dev/assets.clj` con vista previa de la grilla; `LICENSE` (MIT) y licencia de assets (CC BY 4.0); ADR-0001 (actualizado 2026-11-17) | §2A, §4, §5 CORE, §5.1 R1–R11, §6, §8, C24, C26 | M1 | ★ | `[CERRADO]` |
 | S02 | 20/11–24/11 | Esqueleto WAN y vertical jugable en local | **Primero** esqueleto WAN (`/health` + eco WS, `.devcontainer`, prueba desde otra red); después servidor (http-kit, Sente, reitit, salas, reloj 20 Hz, seguridad §7), cliente básico (lobby, canvas con mapa limpio, sprites de jugador, bombas/explosiones/soft-blocks dibujados con código), `bots_test.clj`, `README.md`, `Dockerfile`, job de clon limpio | §2B, §2C, §3, §7, C1, C3, C21–C23, C28, C29, C30 | M2 | ★ | `[PENDIENTE]` |
 | S03 | 25/11–30/11 | Netcode y partida WAN | Predicción propia, reconciliación e interpolación (C12), HUD, e2e Playwright con 4 contextos, gates `build` y `uber`, imagen Docker sin root, partida WAN con evidencia; sprites de bomba y explosión si hay tiempo | §2B, C12, C15, C23, §9 M3 | M3 | ★ | `[PENDIENTE]` |
 
 ## Detalle de hitos
 
-### M1 — Motor isomórfico `[ACTIVO]`
+### M1 — Motor isomórfico `[COMPLETADO]`
 
 - **Hipótesis que valida:** las reglas del juego y del lobby pueden escribirse como funciones puras en `.cljc`, idénticas en JVM y Node, y deterministas (mismas entradas → mismo estado).
 - **Entregables:** `deps.edn` y `shadow-cljs.edn` (build `:test`) ya en el scaffold; `src/cljc/razti/shared/{config,campus,grid,specs,engine,lobby}.cljc`; `INITIAL-GRID` y `SPAWNS` con el trazado aprobado por el líder (§4, C27, C28); `test/cljc/razti/shared/{engine_test,lobby_test,replay_test}.cljc` y el test de convenciones del mapa; `.github/workflows/ci.yml` con los gates (C24); `dev/assets.clj` (mapa 800×800, hoja de sprites y vista previa PNG de la grilla para aprobar el trazado provisional; conflictos #2 y #3); `LICENSE` MIT y `resources/public/assets/LICENSE` CC BY 4.0 (conflicto #4); `docs/adr/0001-sprints-por-hito.md` (actualizado 2026-11-17).
@@ -148,6 +148,7 @@ Desde el brief. Construir cualquiera de estos requiere una **nueva versión del 
 | 2026-11-17 | SCOPE inicial desde el brief v1.1 (aprobado hoy). R11 decidida: el jugador desconectado queda eliminado en el tick en que se detecta. Calendario en días corridos; capacidad 1 líder + Claude Code | Plan base | Líder |
 | 2026-11-17 | S01 iniciado; M1 pasa a `[ACTIVO]`. Rama `sprint/S01-motor` | Plan base | Líder |
 | 2026-11-17 | Decisiones sobre los conflictos #1, #2, #3, #4, #6, #7 y #8; sin No-Go automático en las compuertas (Pivot por defecto). `dev/assets.clj`, `LICENSE`, licencia de assets y ADR-0001 entran al S01. Repo público en la cuenta personal del líder | Sprint actual (aclaraciones del brief, sin cambiar reglas de negocio) | Líder |
+| 2026-11-18 | S01 `[CERRADO]` (PR #1 y #2, `main@8f9dcb2`); M1 `[COMPLETADO]`, compuerta en `docs/milestones/M1-compuerta.md` a la espera del veredicto | Plan base | Líder |
 
 ## Backlog
 
