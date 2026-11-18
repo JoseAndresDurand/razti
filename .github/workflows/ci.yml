@@ -1,0 +1,66 @@
+# CI de RAZTI (brief C24; TDD M1/S01 §4): gates en cada PR y en main.
+# Acciones fijadas por SHA completo (versión en el comentario).
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  gates:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-java@d1374f8ac74474200d16ef8ecee22c7ae7a51880 # v6.3.0
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: DeLaGuardo/setup-clojure@6d46099eae24853c33c0482f2bb54edf4f1a4c74 # 13.7.0
+        with:
+          cli: 1.12.6.1673
+          clj-kondo: 2026.10.26
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: "22"
+
+      - name: pnpm (versión de packageManager)
+        run: corepack enable
+
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: |
+            ~/.m2/repository
+            ~/.gitlibs
+          key: clj-${{ runner.os }}-${{ hashFiles('deps.edn') }}
+
+      - name: Dependencias npm (sin scripts de instalación)
+        run: pnpm install --frozen-lockfile --ignore-scripts
+
+      - name: "gate: test (JVM)"
+        run: clojure -M:test
+
+      - name: "gate: test-cljs-build"
+        run: pnpm exec shadow-cljs compile test
+
+      - name: "gate: test-cljs (Node)"
+        run: node target/test/node-tests.js
+
+      - name: "gate: lint"
+        run: clj-kondo --lint src test
+
+      - name: "gate: format"
+        run: clojure -M:cljfmt check

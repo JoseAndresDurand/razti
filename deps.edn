@@ -15,6 +15,11 @@
         :jvm-opts ["-XX:+UseZGC" "-XX:+ZGenerational" "-Xms256m" "-Xmx256m"]
         :main-opts ["-m" "razti.server.core"]}
 
+  ;; Script de assets (C26): clojure -M:assets [all|map|sprites|preview] [--src <dir>]
+  :assets {:extra-paths ["dev"]
+           :jvm-opts ["-Djava.awt.headless=true"]
+           :main-opts ["-m" "assets"]}
+
   ;; Pruebas JVM (kaocha): clojure -M:test
   :test {:extra-paths ["test/clj" "test/cljc"]
          :extra-deps {lambdaisland/kaocha {:mvn/version "1.91.1392"}
