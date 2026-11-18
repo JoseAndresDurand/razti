@@ -57,4 +57,4 @@
 ## Veredicto del líder
 | Veredicto | Motivo | Fecha | Líder |
 |---|---|---|---|
-| | | | |
+| GO | Las 5 métricas superan el umbral Go (WebSocket por túnel desde datos móviles, binding solo en 127.0.0.1, 4 bots, clon limpio y Docker en la CI, partida manual con ganador); entregables 8/8 y BDD S02-1 a S02-5 en verde | 2026-11-18 | José Andrés Durand |
