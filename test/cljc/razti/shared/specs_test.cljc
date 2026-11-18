@@ -34,3 +34,15 @@
     (is (not (specs/valid-client-event? [:razti/input {:action :bomb}])))
     (is (not (specs/valid-client-event? [:razti/input {:seq 2147483648 :action :bomb}])))
     (is (not (specs/valid-client-event? [:razti/unknown {}])))))
+
+(deftest ^:S02 frontera-cerrada
+  (testing "S02: eventos nuevos válidos"
+    (is (specs/valid-client-event? [:razti/leave-room {}]))
+    (is (specs/valid-client-event? [:razti/echo {:t 1}])))
+  (testing "SEC-03: mapas cerrados, sin claves extra (ni :player-id del cliente)"
+    (is (not (specs/valid-client-event? [:razti/create-room {:name "Ana" :player-id "p9"}])))
+    (is (not (specs/valid-client-event? [:razti/input {:seq 1 :action :bomb :player-id "p9"}])))
+    (is (not (specs/valid-client-event? [:razti/start-game {:x 1}]))))
+  (testing "SEC-04: entradas que no son eventos devuelven false sin lanzar"
+    (doseq [bad [5 nil "x" {} [] [:razti/echo] [:razti/echo {:t 1} :extra] ["razti/echo" {:t 1}]]]
+      (is (false? (specs/valid-client-event? bad)) (pr-str bad)))))

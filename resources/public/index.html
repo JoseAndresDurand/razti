@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{csrf-token}}">
+  <title>RAZTI</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="/js/main.js" defer></script>
+</head>
+<body>
+  <main>
+    <section id="lobby" aria-labelledby="lobby-title">
+      <h1 id="lobby-title">RAZTI</h1>
+      <form id="lobby-form" novalidate>
+        <label for="name">Tu nombre</label>
+        <input id="name" name="name" type="text" maxlength="12" pattern="[A-Za-z0-9_-]{1,12}" autocomplete="nickname" required>
+        <button id="create-room" type="button">Crear sala</button>
+        <label for="code">Código de sala</label>
+        <input id="code" name="code" type="text" maxlength="5" autocomplete="off" required>
+        <button id="join-room" type="button">Unirse</button>
+      </form>
+    </section>
+
+    <section id="room" aria-labelledby="room-title" hidden>
+      <h2 id="room-title">Sala <span id="room-code"></span></h2>
+      <ul id="room-players"></ul>
+      <button id="start-game" type="button" hidden>Iniciar partida</button>
+      <button id="leave-room" type="button">Salir</button>
+    </section>
+
+    <section id="game" aria-label="Partida" hidden>
+      <canvas id="game-canvas" width="800" height="800"></canvas>
+      <div id="result" hidden>
+        <p id="result-text"></p>
+        <button id="restart" type="button" hidden>Reiniciar</button>
+        <button id="leave-game" type="button">Salir</button>
+      </div>
+    </section>
+
+    <p id="error" role="alert"></p>
+  </main>
+  <footer id="status" role="status">Desconectado</footer>
+</body>
+</html>

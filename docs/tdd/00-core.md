@@ -9,17 +9,22 @@
 - **Fuente:** MVP Scope Brief v1.1 (aprobado 2026-11-17) vía `docs/01-SCOPE.md`.
 
 ### 1.2 Hito activo
-- **M1 · Motor isomórfico** `[ACTIVO]` (17/11–19/11), sprint **S01** ★.
-- **Objetivo técnico:** reglas puras del juego y del lobby en `.cljc`, idénticas en JVM y Node, deterministas.
-- **Métrica de la compuerta:** gates `test`, `test-cljs`, `lint`, `format` con 0 fallos y 0 errores en los 7 escenarios BDD y en el test de convenciones del mapa (brief §9).
+- **M2 · Vertical jugable en local** `[ACTIVO]` (20/11–24/11, iniciado el 18/11), sprint **S02** ★. (M1 `[GO]` el 2026-11-18.)
+- **Objetivo técnico:** servidor autoritativo (http-kit, Sente, reitit, salas, reloj de 20 Hz) y cliente básico jugable, validando primero el WebSocket por la red real (Codespaces).
+- **Métrica de la compuerta** (brief §9): esqueleto con `/health` y eco WS desde otra red; servidor sin warnings y solo en `127.0.0.1:3000`; `bots_test.clj` en verde; job de clon limpio en verde; partida manual con 4 pestañas hasta un ganador.
 
-### 1.3 Frontera de alcance del M1
+### 1.3 Frontera de alcance
+
+**M2 (activo) — SÍ:** `src/clj/razti/server/{core,ws,rooms,loop}.clj`; `src/cljs/razti/client/{core,ws,input,render}.cljs`; `resources/public/{index.html,css/style.css}`; pruebas `test/clj/razti/server/*`; `README.md`, `Dockerfile`, `.dockerignore`, `.devcontainer/`; jobs de CI de clon limpio y Docker; ajustes de `config.cljc`, `specs.cljc`, `deps.edn` y `build.clj` listados en `M2.md`.
+**M2 — NO:** predicción, reconciliación e interpolación (C12), HUD completo, Playwright/e2e, sprites de bomba y explosión (S03); todo lo de §12 del brief.
+
+**M1 (`[GO]`, histórico)**
 **SÍ:** `src/cljc/razti/shared/{config,campus,grid,specs,engine,lobby}.cljc`; pruebas `.cljc` (BDD 1–7, reglas decididas, replay, convenciones del mapa); `dev/assets.clj` (mapa 800×800, hoja de sprites, vista previa de la grilla); alias `:assets` en `deps.edn`; `.github/workflows/ci.yml`.
 
 **NO (congelado hasta su sprint):** cualquier archivo en `src/clj` o `src/cljs`; http-kit, Sente, reitit en código; `index.html`, CSS, canvas, overlay en el juego; `README.md` de juego, `Dockerfile`, `.devcontainer`; Playwright. **No-Gos globales** (`01-SCOPE.md`): editor de mapas, persistencia/JWT/BD, power-ups, `agent`, hosting separado, VPS/dominio/TLS, 60 ticks/s, modificar el diseño del mapa.
 
 ### 1.4 Dependencias permitidas
-Solo las de `deps.edn` y `package.json` actuales (versiones exactas). En el M1 el código de `src/cljc` usa **únicamente** `clojure.core`, `clojure.set` y `malli.core` (en `specs.cljc`); las pruebas, `clojure.test` y `clojure.test.check`. `dev/assets.clj` usa solo el JDK (`javax.imageio`, `java.awt`). Ninguna dependencia nueva sin aprobación del líder.
+Solo las de `deps.edn` y `package.json` actuales (versiones exactas). **M2:** el servidor usa `http-kit`, `ring-core` (sesión, params, recursos), `reitit-ring`, `sente` (con su packer Transit) y `core.async` (canal de Sente); el cliente, `sente` y `transit-cljs`; las pruebas de servidor, `java.net.http` del JDK. **Sin** `ring-anti-forgery`, `ring-defaults`, `org.java-websocket` ni dependencias npm de runtime. En el M1 el código de `src/cljc` usa **únicamente** `clojure.core`, `clojure.set` y `malli.core` (en `specs.cljc`); las pruebas, `clojure.test` y `clojure.test.check`. `dev/assets.clj` usa solo el JDK (`javax.imageio`, `java.awt`). Ninguna dependencia nueva sin aprobación del líder.
 
 ### 1.5 Resoluciones (decisiones del brief y del TDD)
 
@@ -46,10 +51,25 @@ Solo las de `deps.edn` y `package.json` actuales (versiones exactas). En el M1 e
 - **T9 Estado extendido** (aditivo al brief §6): `:room/initial-grid`, `:room/spawns`, `:player/join-order`, `:player/connected?`.
 - **T10 Apariciones:** al iniciar, el jugador con el *i*-ésimo `:player/join-order` va a `(nth spawns i)`.
 
+- **T11 CSRF:** el servidor genera el token (32 bytes de `SecureRandom`, base64url) en `[:session :csrf-token]` y lo inyecta en `index.html` (`<meta name="csrf-token">`); Sente lo valida con su `:csrf-token-fn` por defecto. Sin `ring-anti-forgery`.
+- **T12 Identidad:** `:uid` aleatorio (UUID) en la sesión (cookie `razti-session`, `HttpOnly`, `SameSite=Strict`, almacén en memoria). El `:player-id` de toda entrada es ese uid, nunca un dato del cliente.
+- **T13 Reloj:** `ScheduledThreadPoolExecutor` (2 hilos daemon); una tarea de tasa fija de 50 ms por sala, solo en `:playing`; al llegar a `:finished` envía el último snapshot y se cancela.
+- **T14 Snapshots:** `[:razti/snapshot]` por tick sin grilla; la grilla va incluida solo en el tick en que cambia `:room/grid-version` (C11).
+- **T15 Inactividad:** actividad = cualquier evento válido de un jugador de la sala; barrido cada 10 s; se elimina una sala sin jugadores conectados o con ≥ 5 min sin actividad, avisando `[:razti/error {:reason :room-closed}]`.
+- **T16 Límite de entradas:** ventana deslizante de 1 s por uid, máximo 30 eventos; el exceso se descarta sin respuesta.
+- **T17 Una sala por uid:** crear o unirse estando en otra sala → `{:error :already-in-room}`.
+- **T18 Desconexión:** `:chsk/uidport-close` → `lobby/leave-room` (R11).
+- **T19 Cabeceras:** CSP `default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'` (con `-Drazti.dev=true`, `connect-src` añade `ws://127.0.0.1:9630 ws://localhost:9630` para la recarga de shadow-cljs); `X-Content-Type-Options: nosniff`; `Referrer-Policy: no-referrer`.
+- **T20 Colores de jugador** por `:player/join-order`: azul `#2F6FD6`, rojo `#D64545`, verde `#3FA34D`, amarillo `#E0B92E`; cambio de color por rango de tono (200°–250°).
+- **T21 Esqueleto WAN:** barra de estado con el tipo de conexión y el eco en ms; la compuerta exige «WebSocket», no Ajax.
+- **T22 `uber` en el sandbox:** `-Djava.io.tmpdir=target/tmp` en el alias `:build` y `target/tmp` creado antes de compilar.
+- **SEC-03/SEC-04 (backlog del S01):** `ClientEvent` cerrado y `valid-client-event?` que nunca lanza.
+
 ### 1.6 Datos bloqueantes
 - **Trazado de `INITIAL-GRID`/`SPAWNS`:** lo propone Claude en el S01 y el líder lo aprueba (provisional) en el checkpoint 2 con `target/grid-preview.png`.
-- **Conflicto #5** (máximo de salas, minutos de inactividad): bloquea el S02, no el S01.
-- **Colores de jugador** (rojo, verde, amarillo; el azul base es `#2F6FD6`): bloquean el S02.
+- Conflicto #5 y colores de jugador: resueltos (3 salas, 5 min; colores T20 aprobados).
+- **Etiquetas exactas de imágenes** (Docker de build y runtime, devcontainer): se resuelven en el build del S02; si no hay red, las aporta el líder.
+- **Checkpoint WAN (S02):** requiere que el líder abra un Codespace y pruebe desde otra red.
 
 ### 1.7 Prevención transversal (`knowledge/errores-frecuentes.md`)
 - **QA-TDD-DRIFT:** al cambiar el estado de un sprint, actualizar en el mismo cambio `01-SCOPE.md`, `STATE.md`, `tdd/INDEX.md` y la cabecera de la sección del sprint.
@@ -61,10 +81,13 @@ Solo las de `deps.edn` y `package.json` actuales (versiones exactas). En el M1 e
 | 2026-11-17 | TDD inicial: núcleo + M1/S01. Resoluciones D1–D8, R11 y T1–T10 |
 | 2026-11-17 | El líder aprueba las resoluciones T1–T10 |
 | 2026-11-18 | Build S01: `empty-room?` cuenta jugadores conectados (con T7 los desconectados siguen en el mapa durante la partida). Trazado provisional de `INITIAL-GRID`/`SPAWNS` aprobado por el líder (D2) |
+| 2026-11-18 | TDD del S02 (`M2.md`): núcleo actualizado al M2; resoluciones T11–T22 y SEC-03/04 |
+| 2026-11-18 | El líder aprueba T11–T22 (incluidos los colores de T20) |
+| 2026-11-18 | Build S02 paso 2: el CSP de desarrollo (`-Drazti.dev=true`) añade también `'unsafe-eval'` en `script-src` (la carga en caliente de shadow-cljs lo necesita; en `:run` y en release no). El binding de S02-1 se prueba conectando a las IPs no-loopback del equipo; sin ninguna (sandbox), se verifica con `ss -tlnH`. El devcontainer usa `mcr.microsoft.com/devcontainers/java:3.1.9-21-bookworm` + feature `node:1` (22) y `.devcontainer/post-create.sh` |
 | 2026-11-18 | Auditoría S01 (QA + seguridad, sin P0/P1). QA-01: `new-room` deja `:room/next-id 1` (el creador usa el 0). SEC-01/02: `specs.cljc` con fin de texto estricto y límites en todos los esquemas (§5 actualizado en el código; ver `docs/audits/S01-2026-11-18-*.md`) |
 
 ## §3 Tokens visuales
-No aplica al M1 (sin UI). Constantes de geometría en `config.cljc`: canvas 800×800, celda 40 px, grilla 20×20. Los colores de jugador y del HUD se especifican en el S02 (ver §1.6).
+**M2:** fondo `#14161A`, texto `#F2F2F2`, foco `#FFB000` (contorno 3 px); colores de jugador en T20 y `config/player-colors`; soft-block `#8B5A2B`/`#5C3A1A`; blast `#FFB000`/`#FFF2A8`. No aplica al M1 (sin UI). Constantes de geometría en `config.cljc`: canvas 800×800, celda 40 px, grilla 20×20. Los colores de jugador y del HUD se especifican en el S02 (ver §1.6).
 
 ## §6 Rendimiento
 - `tick-game` corre 20 veces por segundo por sala: complejidad O(jugadores + bombas × radio), sin validación Malli en el camino caliente (C9). Malli solo en la frontera (S02) y en pruebas.
@@ -72,6 +95,7 @@ No aplica al M1 (sin UI). Constantes de geometría en `config.cljc`: canvas 800�
 - El render a 60 FPS y la latencia WAN se miden en el M3.
 
 ## §7 Seguridad y entorno
+- **M2:** `allowed-origins` de Sente desde `env-config` (local + Codespaces + `RAZTI_ALLOWED_ORIGINS`); CSRF de Sente activo (T11); cookie de sesión `HttpOnly` + `SameSite=Strict`; cabeceras T19; validación Malli de todo evento antes del router; límite T16; máximo 3 salas; dentro del contenedor (y solo ahí) `RAZTI_HOST` es la dirección de todas las interfaces y el host publica `127.0.0.1:3000`; imagen final JRE con usuario sin privilegios.
 - Servidores (desde el S02) solo en `127.0.0.1` vía `RAZTI_HOST`; nunca una dirección de todas las interfaces en el código.
 - `src/cljc` puro: sin I/O, reloj, aleatoriedad, `atom` ni `println` (verificación con grep en §8).
 - Nunca leer ni versionar `.env*` (salvo `.env.example`).
@@ -89,7 +113,7 @@ Los ejecuta `bash ~/iterastack/playbook/plugin-iterastack/scripts/gates.sh --cwd
 | `test-cljs` | `node target/test/node-tests.js` | Sí |
 | `lint` | `clj-kondo --lint src test` | Sí |
 | `format` | `clojure -M:cljfmt check` | Sí |
-| `build` | `pnpm exec shadow-cljs release app` | No (S02/S03) |
-| `uber` | `clojure -T:build uber` | No (S02/S03) |
+| `build` | `pnpm exec shadow-cljs release app` | No en el M1 · **Sí desde el S02** |
+| `uber` | `clojure -T:build uber` | No en el M1 · **Sí desde el S02** |
 
 **Pureza:** `grep -rnE "\(atom|swap!|reset!|println|random-uuid|rand-int|rand-nth|currentTimeMillis|js/Date" src/cljc` → sin coincidencias.
