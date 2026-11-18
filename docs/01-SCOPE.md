@@ -21,45 +21,45 @@ Días corridos desde el 2026-11-17 (decisión del líder): 3 + 5 + 6 = 14 días,
 
 | Hito | Etapa del brief | Días | Objetivo de validación | Cierra en ★ | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| M1 | Motor isomórfico | 17/11–19/11 (3) | Las reglas puras del juego y del lobby corren iguales en JVM y Node, y son deterministas | S01 | `[EN ESPERA]` |
+| M1 | Motor isomórfico | 17/11–19/11 (3) | Las reglas puras del juego y del lobby corren iguales en JVM y Node, y son deterministas | S01 | `[ACTIVO]` |
 | M2 | Vertical jugable en local | 20/11–24/11 (5) | La red real (Codespaces) soporta el WebSocket y una partida completa de 4 jugadores funciona en local | S02 | `[EN ESPERA]` |
 | M3 | Netcode y WAN | 25/11–30/11 (6) | 4 navegadores en al menos 2 redes distintas juegan una partida hasta el ganador con latencia mitigada | S03 | `[EN ESPERA]` |
 
 ## Compuertas de validación
 
-Las condiciones son las del brief §9 (deterministas: las verifica un comando o una prueba). El brief define cuándo **no se avanza**, pero no un umbral de **No-Go** del producto: queda `PENDIENTE(líder)`.
+Las condiciones son las del brief §9 (deterministas: las verifica un comando o una prueba). El brief define cuándo **no se avanza**, pero no un umbral de **No-Go**. **Decidido 2026-11-17:** no hay No-Go automático; si el Go no se cumple en la fecha del hito se pasa a **Pivot** (reducir alcance o replanificar) y el No-Go queda solo como decisión explícita del líder.
 
 | Hito | Métrica | Fuente del dato | Umbral Go | Umbral No-Go | Origen |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| M1 | Fallos y errores en los 7 escenarios BDD y en el test de convenciones del mapa | Gates `test`, `test-cljs` (`gates.sh`) | 0 fallos y 0 errores | PENDIENTE(líder) | brief §9 |
-| M1 | Lint y formato | Gates `lint`, `format` | 0 fallos y 0 errores | PENDIENTE(líder) | brief §9 |
-| M2 | Esqueleto WAN responde desde otra red | `/health` y eco por WebSocket en la URL pública de Codespaces | Responde | PENDIENTE(líder) | brief §9, C30 |
-| M2 | Arranque y binding del servidor | Log de arranque + `ss -tlnH` | Sin warnings; escucha **solo** en `127.0.0.1:3000` | PENDIENTE(líder) | brief §9 |
-| M2 | Partida de 4 bots | `bots_test.clj` (gate `test`) | Verde | PENDIENTE(líder) | brief §9 |
-| M2 | Clon limpio sigue el README | Job de la CI (C29) | Verde | PENDIENTE(líder) | brief §9, C29 |
-| M2 | Partida manual de 4 pestañas | Prueba manual del líder | Llega a un ganador | PENDIENTE(líder) | brief §9 |
-| M3 | Build del cliente | Gate `build` | 0 warnings | PENDIENTE(líder) | brief §9 |
-| M3 | Uberjar | Gate `uber` | Verde | PENDIENTE(líder) | brief §9 |
-| M3 | e2e (crear sala, unirse, moverse, destruir bloque, ganador) | Gate `e2e` (Playwright, 4 contextos) | Verde | PENDIENTE(líder) | brief §9 |
-| M3 | Imagen de Docker | Inspección de la imagen | Corre como usuario sin privilegios | PENDIENTE(líder) | brief §9 |
-| M3 | Partida WAN | Informe del hito (evidencia) | 4 navegadores, ≥ 2 redes, `wss://` (Codespaces o túnel), llegan a un ganador | PENDIENTE(líder) | brief §9 |
+| M1 | Fallos y errores en los 7 escenarios BDD y en el test de convenciones del mapa | Gates `test`, `test-cljs` (`gates.sh`) | 0 fallos y 0 errores | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
+| M1 | Lint y formato | Gates `lint`, `format` | 0 fallos y 0 errores | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
+| M2 | Esqueleto WAN responde desde otra red | `/health` y eco por WebSocket en la URL pública de Codespaces | Responde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9, C30 |
+| M2 | Arranque y binding del servidor | Log de arranque + `ss -tlnH` | Sin warnings; escucha **solo** en `127.0.0.1:3000` | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
+| M2 | Partida de 4 bots | `bots_test.clj` (gate `test`) | Verde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
+| M2 | Clon limpio sigue el README | Job de la CI (C29) | Verde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9, C29 |
+| M2 | Partida manual de 4 pestañas | Prueba manual del líder | Llega a un ganador | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
+| M3 | Build del cliente | Gate `build` | 0 warnings | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
+| M3 | Uberjar | Gate `uber` | Verde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
+| M3 | e2e (crear sala, unirse, moverse, destruir bloque, ganador) | Gate `e2e` (Playwright, 4 contextos) | Verde | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
+| M3 | Imagen de Docker | Inspección de la imagen | Corre como usuario sin privilegios | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
+| M3 | Partida WAN | Informe del hito (evidencia) | 4 navegadores, ≥ 2 redes, `wss://` (Codespaces o túnel), llegan a un ganador | Sin No-Go automático: si el Go no se cumple en la fecha del hito → Pivot (decide el líder) | brief §9 |
 
 ## Plan de sprints
 
 | Sprint | Días | Objetivo | Entregables | Módulos (brief) | Hito | ★ | Estado |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
-| S01 | 17/11–19/11 | Motor isomórfico puro y probado en JVM + Node | `config`, `campus` (`INITIAL-GRID` + `SPAWNS` con trazado aprobado), `grid`, `specs`, `engine`, `lobby` (`.cljc`); escenarios BDD 1–7 + test de convenciones del mapa; CI de GitHub Actions | §2A, §4, §5 CORE, §5.1 R1–R11, §6, §8, C24 | M1 | ★ | `[PENDIENTE]` |
+| S01 | 17/11–19/11 | Motor isomórfico puro y probado en JVM + Node | `config`, `campus` (`INITIAL-GRID` + `SPAWNS` con trazado aprobado), `grid`, `specs`, `engine`, `lobby` (`.cljc`); escenarios BDD 1–7 + test de convenciones del mapa; CI de GitHub Actions; `dev/assets.clj` con vista previa de la grilla; `LICENSE` (MIT) y licencia de assets (CC BY 4.0); ADR-0001 (actualizado 2026-11-17) | §2A, §4, §5 CORE, §5.1 R1–R11, §6, §8, C24, C26 | M1 | ★ | `[ACTIVO]` |
 | S02 | 20/11–24/11 | Esqueleto WAN y vertical jugable en local | **Primero** esqueleto WAN (`/health` + eco WS, `.devcontainer`, prueba desde otra red); después servidor (http-kit, Sente, reitit, salas, reloj 20 Hz, seguridad §7), cliente básico (lobby, canvas con mapa limpio, sprites de jugador, bombas/explosiones/soft-blocks dibujados con código), `bots_test.clj`, `README.md`, `Dockerfile`, job de clon limpio | §2B, §2C, §3, §7, C1, C3, C21–C23, C28, C29, C30 | M2 | ★ | `[PENDIENTE]` |
 | S03 | 25/11–30/11 | Netcode y partida WAN | Predicción propia, reconciliación e interpolación (C12), HUD, e2e Playwright con 4 contextos, gates `build` y `uber`, imagen Docker sin root, partida WAN con evidencia; sprites de bomba y explosión si hay tiempo | §2B, C12, C15, C23, §9 M3 | M3 | ★ | `[PENDIENTE]` |
 
 ## Detalle de hitos
 
-### M1 — Motor isomórfico `[EN ESPERA]`
+### M1 — Motor isomórfico `[ACTIVO]`
 
 - **Hipótesis que valida:** las reglas del juego y del lobby pueden escribirse como funciones puras en `.cljc`, idénticas en JVM y Node, y deterministas (mismas entradas → mismo estado).
-- **Entregables:** `deps.edn` y `shadow-cljs.edn` (build `:test`) ya en el scaffold; `src/cljc/razti/shared/{config,campus,grid,specs,engine,lobby}.cljc`; `INITIAL-GRID` y `SPAWNS` con el trazado aprobado por el líder (§4, C27, C28); `test/cljc/razti/shared/{engine_test,lobby_test,replay_test}.cljc` y el test de convenciones del mapa; `.github/workflows/ci.yml` con los gates (C24).
+- **Entregables:** `deps.edn` y `shadow-cljs.edn` (build `:test`) ya en el scaffold; `src/cljc/razti/shared/{config,campus,grid,specs,engine,lobby}.cljc`; `INITIAL-GRID` y `SPAWNS` con el trazado aprobado por el líder (§4, C27, C28); `test/cljc/razti/shared/{engine_test,lobby_test,replay_test}.cljc` y el test de convenciones del mapa; `.github/workflows/ci.yml` con los gates (C24); `dev/assets.clj` (mapa 800×800, hoja de sprites y vista previa PNG de la grilla para aprobar el trazado provisional; conflictos #2 y #3); `LICENSE` MIT y `resources/public/assets/LICENSE` CC BY 4.0 (conflicto #4); `docs/adr/0001-sprints-por-hito.md` (actualizado 2026-11-17).
 - **Criterios BDD del brief que aplican:** Escenario 1 — Movimiento válido e inválido · Escenario 2 — Detonación, destrucción de soft-block y eliminación · Escenario 3 — Sala llena · Escenario 4 — Reacción en cadena (R7) · Escenario 5 — Salida de la bomba propia (R9) y límite de bombas (R3) · Escenario 6 — Empate · Escenario 7 — Replay (propiedad con test.check).
-- **Fuera de alcance de este hito:** servidor, WebSocket, cliente y render, assets en `resources/public/assets/`, Docker, README de juego.
+- **Fuera de alcance de este hito:** servidor, WebSocket, cliente y render (el overlay en el juego es del M2), Docker, README de juego.
 
 ### M2 — Vertical jugable en local `[EN ESPERA]`
 
@@ -86,8 +86,8 @@ Las condiciones son las del brief §9 (deterministas: las verifica un comando o 
 | Victoria, empate y reinicio en la misma sala | CORE (§5) | M1 (reglas), M2 (botón) | S01, S02 |
 | Orden del tick (R10) y desconexión (R11) | §5.1 | M1 (motor), M2 (detección en el servidor) | S01, S02 |
 | Mapa: `INITIAL-GRID`, `SPAWNS` y test de convenciones | §4, C20, C27, C28 | M1 | S01 |
-| Overlay de depuración de la grilla | C28 | M2 | S02 (ver conflicto #2) |
-| Script de assets `dev/assets.clj` | C26, §3 | — | **Sin hito en §9** (ver conflicto #3) |
+| Overlay de depuración de la grilla | C28 | M2 | S02 (ajuste fino del trazado; conflicto #2) |
+| Script de assets `dev/assets.clj` + vista previa de la grilla | C26, §3 | M1 | S01 (conflictos #2 y #3, decidido 2026-11-17) |
 | Esquemas Malli | §2A, C9 | M1 (esquemas), M2 (validación en la frontera) | S01, S02 |
 | Replay con test.check | C13, Escenario 7 | M1 | S01 |
 | CI de GitHub Actions (gates) | C24 | M1 | S01 |
@@ -97,7 +97,7 @@ Las condiciones son las del brief §9 (deterministas: las verifica un comando o 
 | Cliente básico y render Canvas | §2B, C19, C21–C23 | M2 | S02 |
 | Snapshots sin grilla (`:room/grid-version`) | C11 | M2 | S02 |
 | README, Dockerfile y job de clon limpio | C29 | M2 | S02 |
-| `LICENSE` | §3, §11.6 | — | **Sin hito en §9** (ver conflicto #4) |
+| `LICENSE` (MIT) y licencia de assets (CC BY 4.0) | §3, §11.6 | M1 | S01 (conflicto #4, decidido 2026-11-17) |
 | Predicción, reconciliación e interpolación | C12 | M3 | S03 |
 | HUD | §3 (`render.cljs`), §10 UX | M3 | S03 |
 | e2e Playwright (4 contextos) | §3, §9 | M3 | S03 |
@@ -126,14 +126,14 @@ Desde el brief. Construir cualquiera de estos requiere una **nueva versión del 
 
 | # | Tema | Qué dice el brief | Dónde | Decisión |
 | :--- | :--- | :--- | :--- | :--- |
-| 1 | Código de sala de ejemplo | El estado de ejemplo usa `:room/code "UNSA1"`, pero el alfabeto de códigos excluye el `1` (`…23456789`, "sin 0/O ni 1/I") | §6 (estado) / §6 (códigos de sala) | PENDIENTE(líder) |
-| 2 | Aprobación del trazado en el M1 | "Aprobar el trazado de `INITIAL-GRID` y `SPAWNS` en el M1, con el overlay de la grilla dibujada sobre el mapa (C28)", pero el canvas y el mapa en el cliente llegan en el M2 | §11.5, C28 / §9 (M1 y M2) | PENDIENTE(líder) |
-| 3 | Script de assets sin hito | `dev/assets.clj` genera `resources/public/assets/` (C26), pero no aparece en el contenido de ningún hito; el M2 ya necesita el mapa y los sprites | C26, §3 / §9 | PENDIENTE(líder) |
-| 4 | `LICENSE` sin hito y licencia de assets | `LICENSE` está en la estructura y el repo es público, pero ningún hito lo incluye; la licencia de los assets sigue sin decidir | §3, §11.6 / §9 | PENDIENTE(líder) |
+| 1 | Código de sala de ejemplo | El estado de ejemplo usa `:room/code "UNSA1"`, pero el alfabeto de códigos excluye el `1` (`…23456789`, "sin 0/O ni 1/I") | §6 (estado) / §6 (códigos de sala) | **Decidido 2026-11-17:** el ejemplo pasa a `"UNSA2"`; el alfabeto no cambia. Se incorpora en brief v1.2 |
+| 2 | Aprobación del trazado en el M1 | "Aprobar el trazado de `INITIAL-GRID` y `SPAWNS` en el M1, con el overlay de la grilla dibujada sobre el mapa (C28)", pero el canvas y el mapa en el cliente llegan en el M2 | §11.5, C28 / §9 (M1 y M2) | **Decidido 2026-11-17:** en el S01, `dev/assets.clj` genera además una vista previa PNG (mapa 800×800 + grilla + celdas bloqueadas en rojo); el líder aprueba un trazado provisional con ella. El ajuste fino se hace en el S02 con el overlay del juego (solo datos, protegido por el test de convenciones). Brief v1.2 |
+| 3 | Script de assets sin hito | `dev/assets.clj` genera `resources/public/assets/` (C26), pero no aparece en el contenido de ningún hito; el M2 ya necesita el mapa y los sprites | C26, §3 / §9 | **Decidido 2026-11-17:** `dev/assets.clj` pasa al S01 (resuelto junto con #2). Brief v1.2 |
+| 4 | `LICENSE` sin hito y licencia de assets | `LICENSE` está en la estructura y el repo es público, pero ningún hito lo incluye; la licencia de los assets sigue sin decidir | §3, §11.6 / §9 | **Decidido 2026-11-17:** código MIT (`LICENSE`) y assets CC BY 4.0 (`resources/public/assets/LICENSE`), ambos en el S01 porque el repo se publica ahora. Brief v1.2 |
 | 5 | Límites de recursos sin valor | "máximo de salas simultáneas en `config.cljc`" y "una sala … que lleva X minutos sin actividad se elimina" no dan los números | §7 | PENDIENTE(líder) |
-| 6 | Casos del lobby sin regla | No se define qué pasa si el creador sale con la sala en `:waiting` (quién pasa a ser `:room/owner`), quién puede pulsar "reiniciar", ni si se admiten nicknames repetidos en una sala | §5, §6 | PENDIENTE(líder) |
-| 7 | Fixtures incompletas de los escenarios 4 y 5 | Escenario 4: no fija el contenido de la celda [3 2] entre las bombas. Escenario 5: no fija la grilla ni los ticks entre "se mueve a [1 2]" y "vuelve a [1 1]", que con R2 exige esperar 4 ticks de cooldown | §8 / §5.1 R2 | PENDIENTE(líder) |
-| 8 | Colocación de bomba en celda ocupada | R3 limita a 1 bomba por jugador, pero no dice si se puede colocar una bomba en una celda que ya tiene otra (dos jugadores en la misma celda) | §5.1 R3 | PENDIENTE(líder) |
+| 6 | Casos del lobby sin regla | No se define qué pasa si el creador sale con la sala en `:waiting` (quién pasa a ser `:room/owner`), quién puede pulsar "reiniciar", ni si se admiten nicknames repetidos en una sala | §5, §6 | **Decidido 2026-11-17:** (a) si el dueño sale en `:waiting`, el dueño pasa al jugador más antiguo por orden de llegada; sala vacía se elimina. (b) Solo el dueño reinicia. (c) Nickname repetido en la sala → `{:error :name-taken}`. Brief v1.2 |
+| 7 | Fixtures incompletas de los escenarios 4 y 5 | Escenario 4: no fija el contenido de la celda [3 2] entre las bombas. Escenario 5: no fija la grilla ni los ticks entre "se mueve a [1 2]" y "vuelve a [1 1]", que con R2 exige esperar 4 ticks de cooldown | §8 / §5.1 R2 | **Decidido 2026-11-17:** Escenario 4: [3 2] es `0` y la grilla de prueba es mínima (interior `0`, borde de hard-blocks). Escenario 5: entre el movimiento a [1 2] y el intento de volver pasan ≥ 4 ticks, con la bomba aún activa. Brief v1.2 |
+| 8 | Colocación de bomba en celda ocupada | R3 limita a 1 bomba por jugador, pero no dice si se puede colocar una bomba en una celda que ya tiene otra (dos jugadores en la misma celda) | §5.1 R3 | **Decidido 2026-11-17:** una bomba por celda; colocar sobre una celda con bomba no hace nada. Brief v1.2 |
 
 ## Desviaciones registradas respecto del brief
 
@@ -146,6 +146,8 @@ Desde el brief. Construir cualquiera de estos requiere una **nueva versión del 
 | Fecha | Cambio | Impacto | Decisión |
 | :--- | :--- | :--- | :--- |
 | 2026-11-17 | SCOPE inicial desde el brief v1.1 (aprobado hoy). R11 decidida: el jugador desconectado queda eliminado en el tick en que se detecta. Calendario en días corridos; capacidad 1 líder + Claude Code | Plan base | Líder |
+| 2026-11-17 | S01 iniciado; M1 pasa a `[ACTIVO]`. Rama `sprint/S01-motor` | Plan base | Líder |
+| 2026-11-17 | Decisiones sobre los conflictos #1, #2, #3, #4, #6, #7 y #8; sin No-Go automático en las compuertas (Pivot por defecto). `dev/assets.clj`, `LICENSE`, licencia de assets y ADR-0001 entran al S01. Repo público en la cuenta personal del líder | Sprint actual (aclaraciones del brief, sin cambiar reglas de negocio) | Líder |
 
 ## Backlog
 
@@ -155,11 +157,9 @@ Desde el brief. Construir cualquiera de estos requiere una **nueva versión del 
 
 ## Pendientes del líder
 
-- **ADR de la desviación del ritmo:** sprints de 3, 5 y 6 días en lugar de 1 semana (brief §10). Crear `docs/adr/0001-sprints-por-hito.md` antes de cerrar el S01.
-- **Repo público en GitHub** (brief §11.7): lo necesita la CI del M1 (C24) y Codespaces en el M2 (C30).
+- **Repo público en GitHub** (brief §11.7): cuenta personal, nombre `razti`. Lo crea el líder (comandos entregados el 2026-11-17).
 - **Codespaces disponible** en la cuenta que hospeda las pruebas (brief §11.8): bloquea el inicio del M2.
-- **Trazado de `INITIAL-GRID` y `SPAWNS`** (brief §11.5): aprobación durante el S01 (ver conflicto #2).
-- **Licencia de los assets** (brief §11.6).
-- **Umbrales de No-Go** de las compuertas M1, M2 y M3.
+- **Trazado de `INITIAL-GRID` y `SPAWNS`** (brief §11.5): aprobación provisional en el S01 con la vista previa PNG.
 - **Mercado piloto / audiencia** del producto (cabecera).
-- **Conflictos y huecos #1 a #8.**
+- **Conflicto #5:** máximo de salas simultáneas y minutos de inactividad (§7); se necesita antes del S02.
+- **Brief v1.2:** incorporar las decisiones del 2026-11-17 (conflictos #1–#4 y #6–#8, R11, compuertas sin No-Go automático).
